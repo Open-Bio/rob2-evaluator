@@ -1,7 +1,7 @@
 from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
 from pydantic import BaseModel
-from typing import List, Dict, Any, Literal
+from typing import List, Dict, Any, Literal, Optional
 
 
 class DeviationJudgement(BaseModel):
@@ -12,7 +12,7 @@ class DeviationJudgement(BaseModel):
     q2_4: str
     q2_5: str
     q2_6: str
-    q2_7: str
+    q2_7: Optional[str] = None  # 修改为可选字段
     overall: str
     reasoning: str
     evidence: List[Dict[str, Any]]
