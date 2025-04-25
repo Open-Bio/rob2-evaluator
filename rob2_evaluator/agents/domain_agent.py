@@ -5,9 +5,30 @@ from rob2_evaluator.schema.rob2_schema import (
 from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
 from typing import List, Dict, Any, Optional
-import re
-from difflib import SequenceMatcher
+
 from jinja2 import Template
+from pydantic import BaseModel, Field  # 引入 pydantic 用于示例
+
+
+# === Pydantic 模型定义 (示例，请根据你的实际结构调整) ===
+class EvidenceItem(BaseModel):
+    text: str = Field(description="Excerpt from original text supporting the judgment.")
+    page_idx: Optional[int] = Field(
+        description="The page number where this evidence text was found in the input context.",
+        default=None,
+    )
+
+
+class SignalJudgement(BaseModel):
+    answer: str
+    reason: str
+    evidence: List[EvidenceItem]
+
+
+class OverallJudgement(BaseModel):
+    risk: str
+    reason: str
+    evidence: List[EvidenceItem]
 
 
 class DomainAgent:
@@ -16,61 +37,24 @@ class DomainAgent:
         domain_key: str,
         model_name="gemma3:27b",
         model_provider=ModelProvider.OLLAMA,
-        fuzzy_match_threshold: float = 0.8,
+        # fuzzy_match_threshold 不再需要
     ):
         self.domain_key = domain_key
         self.schema = DOMAIN_SCHEMAS[domain_key]
         self.model_name = model_name
         self.model_provider = model_provider
-        self.fuzzy_match_threshold = fuzzy_match_threshold
+        # self.fuzzy_match_threshold = fuzzy_match_threshold # 移除
 
-    def _find_evidence_source(
-        self, evidence_text: str, items: List[Dict[str, Any]]
-    ) -> Dict:
-        """Find the page index of the evidence text using fuzzy matching to improve accuracy"""
-        # 1. Try exact match
-        for item in items:
-            item_text = item.get("text", "")
-            if evidence_text.lower() in item_text.lower():
-                # Found paragraph, locate the exact position to extract more accurate context
-                start_pos = item_text.lower().find(evidence_text.lower())
-                extract = item_text[
-                    max(0, start_pos - 20) : min(
-                        len(item_text), start_pos + len(evidence_text) + 20
-                    )
-                ]
-                return {"text": extract, "page_idx": item.get("page_idx", -1)}
-
-        # 2. If exact match fails, try fuzzy match
-        best_match = None
-        best_score = 0
-
-        for item in items:
-            item_text = item.get("text", "")
-            # Use SequenceMatcher for fuzzy matching
-            matcher = SequenceMatcher(None, evidence_text.lower(), item_text.lower())
-            match = matcher.find_longest_match(0, len(evidence_text), 0, len(item_text))
-            score = match.size / len(evidence_text) if evidence_text else 0
-
-            if score > best_score and score >= self.fuzzy_match_threshold:
-                best_score = score
-                matched_text = item_text[match.b : (match.b + match.size)]
-                # Extract context
-                start_pos = max(0, match.b - 20)
-                end_pos = min(len(item_text), match.b + match.size + 20)
-                context = item_text[start_pos:end_pos]
-                best_match = {
-                    "text": context,
-                    "page_idx": item.get("page_idx", -1),
-                    "match_score": score,
-                }
-
-        return best_match if best_match else {"text": evidence_text, "page_idx": -1}
+    # _find_evidence_source 函数已移除
 
     def evaluate(self, items: List[Dict[str, Any]]):
         signals_schema = self.schema["signals"]
         prompt = self._build_prompt(items, signals_schema)
-        result = call_llm(
+
+        # 调用 LLM，使用更新后的 Pydantic 模型进行解析
+        # result 现在是一个 GenericDomainJudgement 实例，
+        # 但其内部的 evidence 字段是 List[Dict[str, Any]]
+        result: GenericDomainJudgement = call_llm(
             prompt=prompt,
             model_name=self.model_name,
             model_provider=self.model_provider,
@@ -78,24 +62,46 @@ class DomainAgent:
             domain_key=self.domain_key,
         )
 
-        # Process the evidence for each signal
+        # 直接处理包含 page_idx 的结果
         processed_signals = {}
-        for signal_id, signal in result.signals.items():
-            processed_evidence = [
-                self._find_evidence_source(e.get("text", ""), items)
-                for e in signal.evidence
-            ]
+        # result.signals.items() -> (signal_id, signal_data: SignalJudgement)
+        for signal_id, signal_data in result.signals.items():
+            # signal_data.evidence 是 List[Dict[str, Any]]
+            processed_evidence = []
+            for ev in signal_data.evidence:  # ev 现在是一个字典
+                # 使用字典访问方式，并用 .get() 提供默认值以增加健壮性
+                text = ev.get("text", "")  # 获取 'text'，如果不存在则返回空字符串
+                page_idx = ev.get("page_idx")  # 获取 'page_idx'，如果不存在则返回 None
+
+                processed_evidence.append(
+                    {
+                        "text": text,
+                        "page_idx": page_idx
+                        if page_idx is not None
+                        else -1,  # 处理 None 情况
+                    }
+                )
+
             processed_signals[signal_id] = {
-                "answer": signal.answer,
-                "reason": signal.reason,
+                "answer": signal_data.answer,
+                "reason": signal_data.reason,
                 "evidence": processed_evidence,
             }
 
-        # Process the evidence for overall assessment
-        processed_overall_evidence = [
-            self._find_evidence_source(e.get("text", ""), items)
-            for e in result.overall.evidence
-        ]
+        # 对 overall judgement 做同样的处理
+        processed_overall_evidence = []
+        # result.overall 是 DomainJudgement 实例
+        # result.overall.evidence 是 List[Dict[str, Any]]
+        for ev in result.overall.evidence:  # ev 现在是一个字典
+            text = ev.get("text", "")
+            page_idx = ev.get("page_idx")
+
+            processed_overall_evidence.append(
+                {
+                    "text": text,
+                    "page_idx": page_idx if page_idx is not None else -1,
+                }
+            )
 
         return {
             "domain": self.schema["domain_name"],
@@ -110,75 +116,90 @@ class DomainAgent:
     def _build_prompt(
         self, items: List[Dict[str, Any]], signals_schema: List[Dict[str, Any]]
     ) -> str:
-        """使用 Jinja2 模板构建 prompt，避免引号和格式问题"""
-        context = "\n".join(
-            [
-                f"[Page {item.get('page_idx', '?')}] {item.get('text', '')}"
-                for item in items
-            ]
-        )
-        signal_options = signals_schema[0]["options"]
+        """使用 Jinja2 模板构建 prompt，要求 LLM 返回 page_idx"""
+        # 构建带有页码标记的上下文
+        context_lines = []
+        for item in items:
+            page = item.get("page_idx", "?")  # 如果意外缺失 page_idx，用 '?' 替代
+            text = item.get("text", "")
+            context_lines.append(f"[Page {page}] {text}")
+        context = "\n\n".join(context_lines)  # 使用双换行符分隔段落可能更清晰
+
+        # 获取 schema 信息
+        signal_options = signals_schema[0]["options"]  # 假设所有信号选项相同
         domain_options = self.schema["domain_options"]
         domain_title = self.schema["domain_name"]
 
-        # Jinja2 模板字符串
+        # 更新后的 Jinja2 模板字符串
         prompt_template = """
 # ROB2 Domain Evaluation Expert
 
 ## Task Background
-You are an expert in the ROB2 framework, specializing in assessing risk of bias in randomized controlled trials (RCTs). You need to analyze the following study content and evaluate the risk of bias in the domain of "{{ domain_title }}".
+You are an expert in the ROB2 framework, specializing in assessing risk of bias in randomized controlled trials (RCTs). Your task is to analyze the provided study content and evaluate the risk of bias for the domain: "{{ domain_title }}".
 
 ## Evaluation Materials
-The following content was extracted from the study (with page numbers):
+The following content has been extracted from the study. Each text block is clearly marked with its source page number using the format `[Page X]`.
 
 {{ context }}
 
 ## Analysis Steps
-1. Carefully read the above material
-2. Answer each signal question one by one
-3. Provide an overall domain-level risk assessment
-4. Evidence must be directly quoted from the original text without modification.
+1.  Carefully read all the provided material, paying close attention to the `[Page X]` markers.
+2.  For each Signal Question below, provide an answer, a detailed reason, and supporting evidence.
+3.  Provide an overall risk assessment for the domain, including the reason and supporting evidence.
+4.  **Crucially**: When providing evidence (`evidence` field), you **must**:
+    *   Quote the text **exactly** as it appears in the Evaluation Materials.
+    *   Include the corresponding `page_idx` (the number X from the `[Page X]` marker) for **each** piece of evidence cited. Find the text segment in the material above and report its associated page number.
 
 ## Signal Questions
 {% for s in signals_schema -%}
 {{ s.id }}: {{ s.text }}
 {% endfor %}
 
-Each question must be answered by selecting one of the following options: {{ signal_options | join('/') }}
+Answer options for each signal: {{ signal_options | join('/') }}
 
 ## Overall Risk Assessment
-Domain-level risk of bias judgment:
+Domain-level risk of bias judgment options:
 {% for opt in domain_options -%}
 - {{ opt }}
 {% endfor %}
 
-## Output Format
-Please return a JSON object in the following structure:
+## Required Output Format
+Return **only** a valid JSON object adhering strictly to the following structure. Ensure all evidence includes both `text` and the correct `page_idx`.
 
 ```json
 {
   "signals": {
     {% for s in signals_schema -%}
     "{{ s.id }}": {
-      "answer": "<Select: {{ signal_options | join('/') }}>",
-      "reason": "<Detailed explanation>",
+      "answer": "<Select one: {{ signal_options | join('/') }}>",
+      "reason": "<Your detailed reasoning for the answer>",
       "evidence": [
-        {"text": "<Excerpt from original text>"}
+        {
+          "text": "<Exact quote from the Evaluation Materials>",
+          "page_idx": <Integer page number corresponding to the quote's source>
+        }
+        // Add more evidence items if needed, each with text and page_idx
       ]
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   },
   "overall": {
-    "risk": "<Select: {{ domain_options | join('/') }}>",
-    "reason": "<Detailed explanation of the overall judgment>",
+    "risk": "<Select one: {{ domain_options | join('/') }}>",
+    "reason": "<Your detailed reasoning for the overall domain judgment>",
     "evidence": [
-      {"text": "<Excerpt from original text supporting the overall judgment>"}
+      {
+        "text": "<Exact quote supporting the overall judgment>",
+        "page_idx": <Integer page number corresponding to the quote's source>
+      }
+      // Add more evidence items if needed
     ]
   }
 }
 ```
 """
-        template = Template(prompt_template)
+        template = Template(
+            prompt_template, trim_blocks=True, lstrip_blocks=True
+        )  # trim/lstrip helps clean up whitespace
         prompt = template.render(
             context=context,
             signals_schema=signals_schema,
@@ -186,4 +207,6 @@ Please return a JSON object in the following structure:
             domain_options=domain_options,
             domain_title=domain_title,
         )
+
+        print(f"DEBUG: Generated Prompt:\n{prompt[:1000]}...")
         return prompt
