@@ -1,15 +1,10 @@
-from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
 from rob2_evaluator.agents.domain_agent import (
     DomainAgent,
 )
-from pydantic import BaseModel
 from typing import List, Dict, Any
 from rob2_evaluator.schema.rob2_schema import (
     DomainKey,
-    SignalJudgement,
-    DomainJudgement,
-    GenericDomainJudgement,
 )
 
 
