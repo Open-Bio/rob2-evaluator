@@ -4,31 +4,9 @@ from rob2_evaluator.schema.rob2_schema import (
 )
 from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 from jinja2 import Template
-from pydantic import BaseModel, Field  # 引入 pydantic 用于示例
-
-
-# === Pydantic 模型定义 (示例，请根据你的实际结构调整) ===
-class EvidenceItem(BaseModel):
-    text: str = Field(description="Excerpt from original text supporting the judgment.")
-    page_idx: Optional[int] = Field(
-        description="The page number where this evidence text was found in the input context.",
-        default=None,
-    )
-
-
-class SignalJudgement(BaseModel):
-    answer: str
-    reason: str
-    evidence: List[EvidenceItem]
-
-
-class OverallJudgement(BaseModel):
-    risk: str
-    reason: str
-    evidence: List[EvidenceItem]
 
 
 class DomainAgent:
@@ -37,23 +15,17 @@ class DomainAgent:
         domain_key: str,
         model_name="gemma3:27b",
         model_provider=ModelProvider.OLLAMA,
-        # fuzzy_match_threshold 不再需要
     ):
         self.domain_key = domain_key
         self.schema = DOMAIN_SCHEMAS[domain_key]
         self.model_name = model_name
         self.model_provider = model_provider
-        # self.fuzzy_match_threshold = fuzzy_match_threshold # 移除
-
-    # _find_evidence_source 函数已移除
 
     def evaluate(self, items: List[Dict[str, Any]]):
         signals_schema = self.schema["signals"]
         prompt = self._build_prompt(items, signals_schema)
 
         # 调用 LLM，使用更新后的 Pydantic 模型进行解析
-        # result 现在是一个 GenericDomainJudgement 实例，
-        # 但其内部的 evidence 字段是 List[Dict[str, Any]]
         result: GenericDomainJudgement = call_llm(
             prompt=prompt,
             model_name=self.model_name,
@@ -64,21 +36,14 @@ class DomainAgent:
 
         # 直接处理包含 page_idx 的结果
         processed_signals = {}
-        # result.signals.items() -> (signal_id, signal_data: SignalJudgement)
         for signal_id, signal_data in result.signals.items():
-            # signal_data.evidence 是 List[Dict[str, Any]]
             processed_evidence = []
-            for ev in signal_data.evidence:  # ev 现在是一个字典
-                # 使用字典访问方式，并用 .get() 提供默认值以增加健壮性
-                text = ev.get("text", "")  # 获取 'text'，如果不存在则返回空字符串
-                page_idx = ev.get("page_idx")  # 获取 'page_idx'，如果不存在则返回 None
-
+            for ev in signal_data.evidence:
+                # ev 已经是 EvidenceItem
                 processed_evidence.append(
                     {
-                        "text": text,
-                        "page_idx": page_idx
-                        if page_idx is not None
-                        else -1,  # 处理 None 情况
+                        "text": ev.text,
+                        "page_idx": ev.page_idx if ev.page_idx is not None else -1,
                     }
                 )
 
@@ -88,18 +53,12 @@ class DomainAgent:
                 "evidence": processed_evidence,
             }
 
-        # 对 overall judgement 做同样的处理
         processed_overall_evidence = []
-        # result.overall 是 DomainJudgement 实例
-        # result.overall.evidence 是 List[Dict[str, Any]]
-        for ev in result.overall.evidence:  # ev 现在是一个字典
-            text = ev.get("text", "")
-            page_idx = ev.get("page_idx")
-
+        for ev in result.overall.evidence:
             processed_overall_evidence.append(
                 {
-                    "text": text,
-                    "page_idx": page_idx if page_idx is not None else -1,
+                    "text": ev.text,
+                    "page_idx": ev.page_idx if ev.page_idx is not None else -1,
                 }
             )
 
@@ -121,8 +80,13 @@ class DomainAgent:
         context_lines = []
         for item in items:
             page = item.get("page_idx", "?")  # 如果意外缺失 page_idx，用 '?' 替代
+            # 这里将 page_idx 加 1（如果是数字）
+            if isinstance(page, int):
+                page_display = page + 1
+            else:
+                page_display = page
             text = item.get("text", "")
-            context_lines.append(f"[Page {page}] {text}")
+            context_lines.append(f"[Page {page_display}] {text}")
         context = "\n\n".join(context_lines)  # 使用双换行符分隔段落可能更清晰
 
         # 获取 schema 信息
@@ -208,5 +172,5 @@ Return **only** a valid JSON object adhering strictly to the following structure
             domain_title=domain_title,
         )
 
-        print(f"DEBUG: Generated Prompt:\n{prompt[:1000]}...")
+        # print(f"DEBUG: Generated Prompt:\n{prompt[:1000]}...")
         return prompt

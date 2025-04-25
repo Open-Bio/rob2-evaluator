@@ -46,3 +46,5 @@ Thumbs.db
 
 # Txt files
 *.txt
+output_cache.json
+report.html

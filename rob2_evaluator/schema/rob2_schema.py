@@ -1,19 +1,28 @@
-from typing import List, Dict, Any, Type, TypeVar
-from pydantic import BaseModel
+from typing import List, Dict, Any, Type, TypeVar, Optional
+from pydantic import BaseModel, Field
 from enum import Enum
+
+
+# === 统一的证据条目模型定义 ===
+class EvidenceItem(BaseModel):
+    text: str = Field(description="Excerpt from original text supporting the judgment.")
+    page_idx: Optional[int] = Field(
+        description="The page number where this evidence text was found in the input context.",
+        default=None,
+    )
 
 
 # === 统一的领域信号与评判结构定义 ===
 class SignalJudgement(BaseModel):
     answer: str
     reason: str
-    evidence: List[Dict[str, Any]]
+    evidence: List[EvidenceItem]
 
 
 class DomainJudgement(BaseModel):
     risk: str
     reason: str
-    evidence: List[Dict[str, Any]]
+    evidence: List[EvidenceItem]
 
 
 class GenericDomainJudgement(BaseModel):
@@ -92,11 +101,11 @@ class DefaultResponseFactory:
         # 处理其他字段
         for field_name, field in model_class.model_fields.items():
             if field_name not in ["signals", "overall"]:
-                if field.annotation == str:
+                if field.annotation is str:
                     default_values[field_name] = "Some concerns"
-                elif field.annotation == float:
+                elif field.annotation is float:
                     default_values[field_name] = 0.0
-                elif field.annotation == int:
+                elif field.annotation is int:
                     default_values[field_name] = 0
                 elif field_name == "evidence":
                     default_values[field_name] = []
@@ -104,7 +113,7 @@ class DefaultResponseFactory:
                     default_values[field_name] = "assignment"
                 elif (
                     hasattr(field.annotation, "__origin__")
-                    and field.annotation.__origin__ == dict
+                    and field.annotation.__origin__ is dict
                 ):
                     default_values[field_name] = {}
                 else:

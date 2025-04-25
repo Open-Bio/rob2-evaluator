@@ -1,0 +1,77 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ROB2 评估报告</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        h2 { color: #2c3e50; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 2em; }
+        th, td { border: 1px solid #ccc; padding: 8px; }
+        th { background: #f5f5f5; }
+        .risk-high { color: #c0392b; font-weight: bold; }
+        .risk-some { color: #e67e22; font-weight: bold; }
+        .risk-low { color: #27ae60; font-weight: bold; }
+        .overall-block { background: #f9f9f9; padding: 1em; border-radius: 8px; margin-top: 2em; }
+    </style>
+</head>
+<body>
+    <h1>ROB2 偏倚风险评估报告</h1>
+    {% for domain_result in results %}
+        {% if domain_result.domain != "Overall risk of bias" %}
+            <div class="domain-block">
+                <h2>{{ domain_result.domain }}</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>信号问题ID</th>
+                            <th>答案</th>
+                            <th>理由</th>
+                            <th>证据</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for signal_id, signal in domain_result.signals.items() %}
+                        <tr>
+                            <td>{{ signal_id }}</td>
+                            <td>{{ signal.answer }}</td>
+                            <td>{{ signal.reason }}</td>
+                            <td>
+                                <ul>
+                                {% for ev in signal.evidence %}
+                                    <li>“{{ ev.text }}” <span style="color:gray;">(第{{ ev.page_idx }}页)</span></li>
+                                {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="domain-overall">
+                    <b>领域总体风险：</b>
+                    <span class="risk-{{ 'high' if domain_result.overall.risk == 'High risk' else 'some' if domain_result.overall.risk == 'Some concerns' else 'low' }}">{{ domain_result.overall.risk }}</span><br>
+                    <b>理由：</b> {{ domain_result.overall.reason }}<br>
+                    <b>证据：</b>
+                    <ul>
+                        {% for ev in domain_result.overall.evidence %}
+                        <li>“{{ ev.text }}” <span style="color:gray;">(第{{ ev.page_idx }}页)</span></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <div class="overall-block">
+                <h2>总体偏倚风险</h2>
+                <b>总体判定：</b>
+                <span class="risk-{{ 'high' if domain_result.judgement.overall == 'High risk' else 'some' if domain_result.judgement.overall == 'Some concerns' else 'low' }}">{{ domain_result.judgement.overall }}</span><br>
+                <b>理由：</b> {{ domain_result.reasoning }}<br>
+                <b>各领域风险：</b>
+                <ul>
+                    {% for ev in domain_result.evidence %}
+                    <li>{{ ev.domain }}：<b>{{ ev.risk }}</b></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endfor %}
+</body>
+</html>
