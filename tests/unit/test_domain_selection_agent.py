@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch
 from rob2_evaluator.agents.domain_selection import DomainSelectionAgent
-from rob2_evaluator.agents.domain_agent import (
+from rob2_evaluator.schema.rob2_schema import (
     SignalJudgement,
     DomainJudgement,
     GenericDomainJudgement,

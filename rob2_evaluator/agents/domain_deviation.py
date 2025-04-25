@@ -5,36 +5,12 @@ from rob2_evaluator.agents.domain_agent import (
 )
 from pydantic import BaseModel
 from typing import List, Dict, Any
-from rob2_evaluator.schema.rob2_schema import DomainKey
-
-
-class DeviationAssignmentJudgement(BaseModel):
-    """Assignment分析类型的判断结构"""
-
-    q2_1: str
-    q2_2: str
-    q2_3: str
-    q2_4: str
-    q2_5: str
-    q2_6: str
-    q2_7: str
-    overall: str
-    reasoning: str
-    evidence: List[Dict[str, Any]]
-
-
-class DeviationAdherenceJudgement(BaseModel):
-    """Adherence分析类型的判断结构"""
-
-    q2_1: str
-    q2_2: str
-    q2_3: str
-    q2_4: str
-    q2_5: str
-    q2_6: str
-    overall: str
-    reasoning: str
-    evidence: List[Dict[str, Any]]
+from rob2_evaluator.schema.rob2_schema import (
+    DomainKey,
+    SignalJudgement,
+    DomainJudgement,
+    GenericDomainJudgement,
+)
 
 
 class DomainDeviationAssignmentAgent(DomainAgent):

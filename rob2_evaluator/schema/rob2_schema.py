@@ -3,6 +3,24 @@ from pydantic import BaseModel
 from enum import Enum
 
 
+# === 统一的领域信号与评判结构定义 ===
+class SignalJudgement(BaseModel):
+    answer: str
+    reason: str
+    evidence: List[Dict[str, Any]]
+
+
+class DomainJudgement(BaseModel):
+    risk: str
+    reason: str
+    evidence: List[Dict[str, Any]]
+
+
+class GenericDomainJudgement(BaseModel):
+    signals: Dict[str, SignalJudgement]
+    overall: DomainJudgement
+
+
 class DomainKey(str, Enum):
     RANDOMIZATION = "randomization"
     DEVIATION_ASSIGNMENT = "deviation_assignment"

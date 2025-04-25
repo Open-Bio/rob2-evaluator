@@ -1,19 +1,14 @@
 from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
 from rob2_evaluator.agents.domain_agent import DomainAgent
-from rob2_evaluator.schema.rob2_schema import DomainKey
+from rob2_evaluator.schema.rob2_schema import (
+    DomainKey,
+    SignalJudgement,
+    DomainJudgement,
+    GenericDomainJudgement,
+)
 from pydantic import BaseModel
 from typing import List, Dict, Any
-
-
-class MissingDataJudgement(BaseModel):
-    q3_1: str
-    q3_2: str
-    q3_3: str
-    q3_4: str
-    overall: str
-    reasoning: str
-    evidence: List[Dict[str, Any]]
 
 
 class DomainMissingDataAgent(DomainAgent):

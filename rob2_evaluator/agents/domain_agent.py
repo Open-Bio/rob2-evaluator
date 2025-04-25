@@ -1,25 +1,12 @@
-from rob2_evaluator.schema.rob2_schema import DOMAIN_SCHEMAS
+from rob2_evaluator.schema.rob2_schema import (
+    DOMAIN_SCHEMAS,
+    # SignalJudgement,
+    # DomainJudgement,
+    GenericDomainJudgement,
+)
 from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
 from typing import List, Dict, Any
-from pydantic import BaseModel
-
-
-class SignalJudgement(BaseModel):
-    answer: str
-    reason: str
-    evidence: List[Dict[str, Any]]
-
-
-class DomainJudgement(BaseModel):
-    risk: str
-    reason: str
-    evidence: List[Dict[str, Any]]
-
-
-class GenericDomainJudgement(BaseModel):
-    signals: Dict[str, SignalJudgement]
-    overall: DomainJudgement
 
 
 class DomainAgent:

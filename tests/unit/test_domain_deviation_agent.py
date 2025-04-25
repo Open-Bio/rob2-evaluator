@@ -4,7 +4,7 @@ from rob2_evaluator.agents.domain_deviation import (
     DomainDeviationAssignmentAgent,
     DomainDeviationAdherenceAgent,
 )
-from rob2_evaluator.agents.domain_agent import (
+from rob2_evaluator.schema.rob2_schema import (
     SignalJudgement,
     DomainJudgement,
     GenericDomainJudgement,

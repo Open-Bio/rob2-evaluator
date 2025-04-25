@@ -1,18 +1,14 @@
 from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
 from rob2_evaluator.agents.domain_agent import DomainAgent
-from rob2_evaluator.schema.rob2_schema import DomainKey
+from rob2_evaluator.schema.rob2_schema import (
+    DomainKey,
+    SignalJudgement,
+    DomainJudgement,
+    GenericDomainJudgement,
+)
 from pydantic import BaseModel
 from typing import List, Dict, Any
-
-
-class SelectionJudgement(BaseModel):
-    q5_1: str
-    q5_2: str
-    q5_3: str
-    overall: str
-    reasoning: str
-    evidence: List[Dict[str, Any]]
 
 
 class DomainSelectionAgent(DomainAgent):
