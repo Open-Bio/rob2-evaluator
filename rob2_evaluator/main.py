@@ -18,7 +18,7 @@ def process_single_file(input_path):
     content_list = load_json(input_path)
 
     # # 入口专家过滤
-    entry_agent = EntryAgent()
+    entry_agent = EntryAgent(model_name="gemma3")
     relevant_items = entry_agent.filter_relevant(content_list)
     # 自动推断Domain 2分析类型
     analysis_type_agent = AnalysisTypeAgent()
@@ -29,7 +29,7 @@ def process_single_file(input_path):
         # Domain 2 分析类型为 assignment
         domain_agents = [
             DomainRandomizationAgent(),
-            DomainDeviationAssignmentAgent(),
+            # DomainDeviationAssignmentAgent(),
             # DomainMissingDataAgent(),
             # DomainMeasurementAgent(),
             # DomainSelectionAgent(),
@@ -38,7 +38,7 @@ def process_single_file(input_path):
         # Domain 2 分析类型为 adherence
         domain_agents = [
             DomainRandomizationAgent(),
-            DomainDeviationAdherenceAgent(),
+            # DomainDeviationAdherenceAgent(),
             # DomainMissingDataAgent(),
             # DomainMeasurementAgent(),
             # DomainSelectionAgent(),
