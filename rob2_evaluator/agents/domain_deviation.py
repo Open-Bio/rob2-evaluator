@@ -11,12 +11,12 @@ from rob2_evaluator.schema.rob2_schema import (
 class DomainDeviationAssignmentAgent(DomainAgent):
     """Domain 2: Deviations from intended interventions (effect of assignment) expert"""
 
-    def __init__(self, model_name="gemma3", model_provider=ModelProvider.OLLAMA):
+    def __init__(self, model_name="gemma3:27b", model_provider=ModelProvider.OLLAMA):
         super().__init__(DomainKey.DEVIATION_ASSIGNMENT, model_name, model_provider)
 
 
 class DomainDeviationAdherenceAgent(DomainAgent):
     """Domain 2: Deviations from intended interventions (effect of adherence) expert"""
 
-    def __init__(self, model_name="gemma3", model_provider=ModelProvider.OLLAMA):
+    def __init__(self, model_name="gemma3:27b", model_provider=ModelProvider.OLLAMA):
         super().__init__(DomainKey.DEVIATION_ADHERENCE, model_name, model_provider)

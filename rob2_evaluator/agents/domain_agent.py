@@ -11,13 +11,22 @@ class DomainAgent:
     def __init__(
         self,
         domain_key: str,
-        model_name="gemma3",
+        model_name="gemma3:27b",
         model_provider=ModelProvider.OLLAMA,
     ):
         self.domain_key = domain_key
         self.schema = DOMAIN_SCHEMAS[domain_key]
         self.model_name = model_name
         self.model_provider = model_provider
+
+    def _find_evidence_source(
+        self, evidence_text: str, items: List[Dict[str, Any]]
+    ) -> Dict:
+        """查找证据原文对应的page_idx"""
+        for item in items:
+            if evidence_text.lower() in item.get("text", "").lower():
+                return {"text": evidence_text, "page_idx": item.get("page_idx", -1)}
+        return {"text": evidence_text, "page_idx": -1}  # 找不到时使用-1标记
 
     def evaluate(self, items: List[Dict[str, Any]]):
         signals_schema = self.schema["signals"]
@@ -27,19 +36,35 @@ class DomainAgent:
             model_name=self.model_name,
             model_provider=self.model_provider,
             pydantic_model=GenericDomainJudgement,
-            domain_key=self.domain_key,  # 添加domain_key参数
+            domain_key=self.domain_key,
         )
-        # 输出为表格友好格式
+
+        # 处理signals的evidence
+        processed_signals = {}
+        for signal_id, signal in result.signals.items():
+            processed_evidence = [
+                self._find_evidence_source(e.get("text", ""), items)
+                for e in signal.evidence
+            ]
+            processed_signals[signal_id] = {
+                "answer": signal.answer,
+                "reason": signal.reason,
+                "evidence": processed_evidence,
+            }
+
+        # 处理overall的evidence
+        processed_overall_evidence = [
+            self._find_evidence_source(e.get("text", ""), items)
+            for e in result.overall.evidence
+        ]
+
         return {
             "domain": self.schema["domain_name"],
-            "signals": {
-                k: {"answer": v.answer, "reason": v.reason, "evidence": v.evidence}
-                for k, v in result.signals.items()
-            },
+            "signals": processed_signals,
             "overall": {
                 "risk": result.overall.risk,
                 "reason": result.overall.reason,
-                "evidence": result.overall.evidence,
+                "evidence": processed_overall_evidence,
             },
         }
 
@@ -61,5 +86,10 @@ class DomainAgent:
         )
         domain_title = self.schema["domain_name"]
         prompt = f"""
-You are an expert in risk of bias assessment for randomized controlled trials (ROB2 framework). Carefully review the following extracted study content (with page numbers):\n\n{context}\n\nFor the domain '{domain_title}', answer the following signalling questions. For each, respond strictly with one of: {"/".join(signal_options)}.\n\n{signal_questions}\n\nDomain-level risk of bias judgement (overall):\n- {"\n- ".join(domain_options)}\n\nReturn a JSON object with the following structure:\n{{\n  {signals_json},\n  "overall": {{"risk": "{"/".join(domain_options)}", "reason": "...", "evidence": [{{"page_idx": int, "text": "..."}}, ...]}}\n}}\nStrictly use only the allowed options for all answers.\n"""
+You are an expert in risk of bias assessment for randomized controlled trials (ROB2 framework). Carefully review the following extracted study content (with page numbers):\n\n{context}\n\nFor the domain '{domain_title}', answer the following signalling questions. For each, respond strictly with one of: {"/".join(signal_options)}.\n\n{signal_questions}\n\nDomain-level risk of bias judgement (overall):\n- {"\n- ".join(domain_options)}\n\nReturn a JSON object with the following structure:\n{{
+  "signals": {{
+    {signals_json}
+  }},
+  "overall": {{"risk": "{"/".join(domain_options)}", "reason": "...", "evidence": [{{"page_idx": int, "text": "..."}}, ...]}}
+}}\nStrictly use only the allowed options for all answers.\n"""
         return prompt
