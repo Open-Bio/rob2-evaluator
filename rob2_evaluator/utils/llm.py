@@ -4,6 +4,7 @@ import json
 from typing import TypeVar, Type, Optional, Any
 from pydantic import BaseModel
 from rob2_evaluator.utils.progress import progress
+from rob2_evaluator.schema.rob2_schema import DefaultResponseFactory
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -15,7 +16,7 @@ def call_llm(
     pydantic_model: Type[T] = None,
     agent_name: Optional[str] = None,
     max_retries: int = 3,
-    default_factory=None,
+    domain_key: Optional[str] = None,
 ) -> T:
     """
     Makes an LLM call with retry logic, handling both JSON supported and non-JSON supported models.
@@ -27,7 +28,7 @@ def call_llm(
         pydantic_model: The Pydantic model class to structure the output
         agent_name: Optional name of the agent for progress updates
         max_retries: Maximum number of retries (default: 3)
-        default_factory: Optional factory function to create default response on failure
+        domain_key: Optional domain key for creating default responses
 
     Returns:
         An instance of the specified Pydantic model
@@ -84,37 +85,55 @@ def call_llm(
 
             if attempt == max_retries - 1:
                 print(f"Error in LLM call after {max_retries} attempts: {e}")
-                # Use default_factory if provided, otherwise create a basic default
-                if default_factory:
-                    return default_factory()
-                return create_default_response(pydantic_model)
+                # Create default response using factory
+                if domain_key:
+                    return DefaultResponseFactory.create_response(
+                        pydantic_model, domain_key
+                    )
+                # Fallback to basic default for non-domain models
+                return create_basic_default(pydantic_model)
 
-    # This should never be reached due to the retry logic above
-    return create_default_response(pydantic_model)
+    return create_basic_default(pydantic_model)
 
 
-def create_default_response(model_class: Type[T]) -> T:
-    """Creates a safe default response based on the model's fields."""
+def create_basic_default(model_class: Type[T]) -> T:
+    """Creates a basic default response for non-domain models."""
     default_values = {}
     for field_name, field in model_class.model_fields.items():
         if field.annotation == str:
-            default_values[field_name] = "Low"  # 默认为Low风险
+            default_values[field_name] = "Some concerns"
         elif field.annotation == float:
             default_values[field_name] = 0.0
         elif field.annotation == int:
             default_values[field_name] = 0
-        elif field_name == "evidence":  # 为evidence提供正确的空列表默认值
+        elif field_name == "evidence":
             default_values[field_name] = []
-        elif field_name == "analysis_type":  # 为analysis_type提供合法的默认值
-            default_values[field_name] = "assignment"
+        elif field_name == "signals":
+            default_values[field_name] = {
+                "q1": {"answer": "NI", "reason": "No information", "evidence": []}
+            }
+        elif field_name == "overall":
+            default_values[field_name] = {
+                "risk": "Some concerns",
+                "reason": "Insufficient information",
+                "evidence": [],
+            }
         elif (
             hasattr(field.annotation, "__origin__")
             and field.annotation.__origin__ == dict
         ):
             default_values[field_name] = {}
+        elif (
+            hasattr(field.annotation, "__origin__")
+            and field.annotation.__origin__ == list
+        ):
+            default_values[field_name] = []
         else:
-            # For other types (like Literal), try to use the first allowed value
-            if hasattr(field.annotation, "__args__"):
+            # 处理自定义Pydantic模型
+            if hasattr(field.annotation, "model_fields"):
+                default_values[field_name] = create_basic_default(field.annotation)
+            # 处理可选类型
+            elif hasattr(field.annotation, "__args__"):
                 default_values[field_name] = field.annotation.__args__[0]
             else:
                 default_values[field_name] = None

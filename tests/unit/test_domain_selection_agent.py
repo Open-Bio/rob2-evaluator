@@ -1,66 +1,75 @@
 import pytest
 from unittest.mock import patch
-from rob2_evaluator.agents.domain_selection import (
-    DomainSelectionAgent,
-    SelectionJudgement,
+from rob2_evaluator.agents.domain_selection import DomainSelectionAgent
+from rob2_evaluator.agents.domain_agent import (
+    SignalJudgement,
+    DomainJudgement,
+    GenericDomainJudgement,
 )
 from tests.fixtures.sample_content import sample_content
 
 
-def mock_judgement(risk_level="Low"):
-    return SelectionJudgement(
-        q5_1=risk_level,
-        q5_2=risk_level,
-        q5_3=risk_level,
-        overall=risk_level,
-        reasoning="Pre-specified analysis plan followed.",
-        evidence=[{"page_idx": 0, "text": "pre-specified analysis"}],
+def mock_judgement(signal_answer="Y", domain_risk="Low risk"):
+    q_ids = ["q5_1", "q5_2", "q5_3"]
+    signals = {
+        q: SignalJudgement(
+            answer=signal_answer,
+            reason="充分理由说明该答案",
+            evidence=[{"page_idx": 0, "text": "pre-specified analysis"}],
+        )
+        for q in q_ids
+    }
+    return GenericDomainJudgement(
+        signals=signals,
+        overall=DomainJudgement(
+            risk=domain_risk,
+            reason="领域评分理由",
+            evidence=[{"page_idx": 0, "text": "pre-specified analysis"}],
+        ),
     )
 
 
 def test_evaluate_selection_low_risk(sample_content):
     agent = DomainSelectionAgent()
     with patch(
-        "rob2_evaluator.agents.domain_selection.call_llm",
-        return_value=mock_judgement("Low"),
+        "rob2_evaluator.agents.domain_agent.call_llm",
+        return_value=mock_judgement("Y", "Low risk"),
     ):
         result = agent.evaluate(sample_content)
         assert result["domain"] == "Selection of the reported result"
-        assert result["judgement"]["q5_1"] == "Low"
-        assert result["judgement"]["q5_2"] == "Low"
-        assert result["judgement"]["q5_3"] == "Low"
-        assert result["judgement"]["overall"] == "Low"
-        assert isinstance(result["evidence"], list)
-        assert result["reasoning"] == "Pre-specified analysis plan followed."
+        for q in ["q5_1", "q5_2", "q5_3"]:
+            assert result["signals"][q]["answer"] == "Y"
+        assert result["overall"]["risk"] == "Low risk"
 
 
 def test_evaluate_selection_high_risk(sample_content):
     agent = DomainSelectionAgent()
     with patch(
-        "rob2_evaluator.agents.domain_selection.call_llm",
-        return_value=mock_judgement("High"),
+        "rob2_evaluator.agents.domain_agent.call_llm",
+        return_value=mock_judgement("N", "High risk"),
     ):
         result = agent.evaluate(sample_content)
-        assert result["judgement"]["overall"] == "High"
-        assert all(
-            v == "High" for k, v in result["judgement"].items() if k != "reasoning"
-        )
+        for q in ["q5_1", "q5_2", "q5_3"]:
+            assert result["signals"][q]["answer"] == "N"
+        assert result["overall"]["risk"] == "High risk"
 
 
 def test_evaluate_selection_some_concerns(sample_content):
     agent = DomainSelectionAgent()
     with patch(
-        "rob2_evaluator.agents.domain_selection.call_llm",
-        return_value=mock_judgement("Some concerns"),
+        "rob2_evaluator.agents.domain_agent.call_llm",
+        return_value=mock_judgement("NI", "Some concerns"),
     ):
         result = agent.evaluate(sample_content)
-        assert result["judgement"]["overall"] == "Some concerns"
+        for q in ["q5_1", "q5_2", "q5_3"]:
+            assert result["signals"][q]["answer"] == "NI"
+        assert result["overall"]["risk"] == "Some concerns"
 
 
 def test_evaluate_selection_error_handling(sample_content):
     agent = DomainSelectionAgent()
     with patch(
-        "rob2_evaluator.agents.domain_selection.call_llm",
+        "rob2_evaluator.agents.domain_agent.call_llm",
         side_effect=Exception("LLM Error"),
     ):
         with pytest.raises(Exception) as exc_info:
