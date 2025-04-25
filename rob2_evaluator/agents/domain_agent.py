@@ -1,7 +1,5 @@
 from rob2_evaluator.schema.rob2_schema import (
     DOMAIN_SCHEMAS,
-    # SignalJudgement,
-    # DomainJudgement,
     GenericDomainJudgement,
 )
 from rob2_evaluator.utils.llm import call_llm
@@ -21,17 +19,9 @@ class DomainAgent:
         self.model_name = model_name
         self.model_provider = model_provider
 
-    def evaluate(self, items: List[Dict[str, Any]], analysis_type=None):
-        # 针对deviation域，按analysis_type切换信号问题schema
-        if self.domain_key == "deviation":
-            if analysis_type not in ["assignment", "adherence"]:
-                raise ValueError(
-                    "analysis_type must be either 'assignment' or 'adherence'"
-                )
-            signals_schema = self.schema["paths"][analysis_type]
-        else:
-            signals_schema = self.schema["signals"]
-        prompt = self._build_prompt(items, signals_schema, analysis_type)
+    def evaluate(self, items: List[Dict[str, Any]]):
+        signals_schema = self.schema["signals"]
+        prompt = self._build_prompt(items, signals_schema)
         result = call_llm(
             prompt=prompt,
             model_name=self.model_name,
@@ -53,7 +43,7 @@ class DomainAgent:
             },
         }
 
-    def _build_prompt(self, items, signals_schema, analysis_type=None):
+    def _build_prompt(self, items, signals_schema):
         context = "\n".join(
             [
                 f"[Page {item.get('page_idx', '?')}] {item.get('text', '')}"

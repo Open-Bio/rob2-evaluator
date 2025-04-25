@@ -137,7 +137,7 @@ def create_basic_default(model_class: Type[T]) -> T:
                 default_values[field_name] = field.annotation.__args__[0]
             else:
                 default_values[field_name] = None
-
+    
     return model_class(**default_values)
 
 

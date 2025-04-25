@@ -203,7 +203,7 @@ def test_domain_deviation_adherence_error_cases():
         rprint(
             f"\n[bold red]Error during adherence error case testing:[/bold red] {str(e)}"
         )
-        raise
+        raise 
 
 
 if __name__ == "__main__":

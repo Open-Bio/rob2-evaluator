@@ -118,37 +118,6 @@ class DefaultResponseFactory:
 
 # ROB2 各领域信号问题 schema 集中管理
 DOMAIN_SCHEMAS = {
-    "measurement": {
-        "signals": [
-            {
-                "id": "q4_1",
-                "text": "Was the method of measuring the outcome inappropriate?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
-            },
-            {
-                "id": "q4_2",
-                "text": "Could measurement or ascertainment of the outcome have differed between intervention groups?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
-            },
-            {
-                "id": "q4_3",
-                "text": "Were outcome assessors aware of the intervention received by study participants?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
-            },
-            {
-                "id": "q4_4",
-                "text": "Could assessment of the outcome have been influenced by knowledge of intervention received?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
-            },
-            {
-                "id": "q4_5",
-                "text": "Is it likely that assessment of the outcome was influenced by knowledge of intervention received?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
-            },
-        ],
-        "domain_options": ["Low risk", "Some concerns", "High risk"],
-        "domain_name": "Measurement of the outcome",
-    },
     "randomization": {
         "signals": [
             {
@@ -272,6 +241,37 @@ DOMAIN_SCHEMAS = {
         ],
         "domain_options": ["Low risk", "Some concerns", "High risk"],
         "domain_name": "Missing outcome data",
+    },
+    "measurement": {
+        "signals": [
+            {
+                "id": "q4_1",
+                "text": "Was the method of measuring the outcome inappropriate?",
+                "options": ["Y", "PY", "PN", "N", "NI"],
+            },
+            {
+                "id": "q4_2",
+                "text": "Could measurement or ascertainment of the outcome have differed between intervention groups?",
+                "options": ["Y", "PY", "PN", "N", "NI"],
+            },
+            {
+                "id": "q4_3",
+                "text": "Were outcome assessors aware of the intervention received by study participants?",
+                "options": ["Y", "PY", "PN", "N", "NI"],
+            },
+            {
+                "id": "q4_4",
+                "text": "Could assessment of the outcome have been influenced by knowledge of intervention received?",
+                "options": ["Y", "PY", "PN", "N", "NI"],
+            },
+            {
+                "id": "q4_5",
+                "text": "Is it likely that assessment of the outcome was influenced by knowledge of intervention received?",
+                "options": ["Y", "PY", "PN", "N", "NI"],
+            },
+        ],
+        "domain_options": ["Low risk", "Some concerns", "High risk"],
+        "domain_name": "Measurement of the outcome",
     },
     "selection": {
         "signals": [
