@@ -11,7 +11,7 @@ class DomainAgent:
     def __init__(
         self,
         domain_key: str,
-        model_name="gemma3:27b",
+        model_name="gemma3",
         model_provider=ModelProvider.OLLAMA,
     ):
         self.domain_key = domain_key

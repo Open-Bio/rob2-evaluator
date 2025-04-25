@@ -85,7 +85,7 @@ def call_llm(
 
             if attempt == max_retries - 1:
                 print(f"Error in LLM call after {max_retries} attempts: {e}")
-                # Create default response using factory
+                # 优先使用领域schema的默认响应
                 if domain_key:
                     return DefaultResponseFactory.create_response(
                         pydantic_model, domain_key
@@ -93,6 +93,9 @@ def call_llm(
                 # Fallback to basic default for non-domain models
                 return create_basic_default(pydantic_model)
 
+    # 最终兜底也保持一致
+    if domain_key:
+        return DefaultResponseFactory.create_response(pydantic_model, domain_key)
     return create_basic_default(pydantic_model)
 
 
@@ -137,7 +140,7 @@ def create_basic_default(model_class: Type[T]) -> T:
                 default_values[field_name] = field.annotation.__args__[0]
             else:
                 default_values[field_name] = None
-    
+
     return model_class(**default_values)
 
 

@@ -135,7 +135,7 @@ OLLAMA_MODELS = [
     ),
     LLMModel(
         display_name="[ollama] llama3.1 (8B)",
-        model_name="gemma3:27b",
+        model_name="gemma3",
         provider=ModelProvider.OLLAMA,
     ),
     LLMModel(
@@ -150,7 +150,7 @@ OLLAMA_MODELS = [
     ),
     LLMModel(
         display_name="[ollama] gemma3 (27B)",
-        model_name="gemma3:27b",
+        model_name="gemma3",
         provider=ModelProvider.OLLAMA,
     ),
     LLMModel(

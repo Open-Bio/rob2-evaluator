@@ -20,7 +20,7 @@ def test_domain_deviation_assignment_integration():
     """测试Assignment子代理的正常情况"""
     test_content = load_json("examples/20.Gottlie.json")
     agent = DomainDeviationAssignmentAgent(
-        model_name="gemma3:27b",
+        model_name="gemma3",
         model_provider=ModelProvider.OLLAMA,
     )
 
@@ -64,7 +64,7 @@ def test_domain_deviation_adherence_integration():
     """测试Adherence子代理的正常情况"""
     test_content = load_json("examples/20.Gottlie.json")
     agent = DomainDeviationAdherenceAgent(
-        model_name="gemma3:27b",
+        model_name="gemma3",
         model_provider=ModelProvider.OLLAMA,
     )
 
@@ -103,7 +103,7 @@ def test_domain_deviation_adherence_integration():
 def test_domain_deviation_assignment_error_cases():
     """测试Assignment子代理的错误情况"""
     agent = DomainDeviationAssignmentAgent(
-        model_name="gemma3:27b",
+        model_name="gemma3",
         model_provider=ModelProvider.OLLAMA,
     )
 
@@ -156,7 +156,7 @@ def test_domain_deviation_assignment_error_cases():
 def test_domain_deviation_adherence_error_cases():
     """测试Adherence子代理的错误情况"""
     agent = DomainDeviationAdherenceAgent(
-        model_name="gemma3:27b",
+        model_name="gemma3",
         model_provider=ModelProvider.OLLAMA,
     )
 
@@ -203,7 +203,7 @@ def test_domain_deviation_adherence_error_cases():
         rprint(
             f"\n[bold red]Error during adherence error case testing:[/bold red] {str(e)}"
         )
-        raise 
+        raise
 
 
 if __name__ == "__main__":

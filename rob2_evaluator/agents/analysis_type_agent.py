@@ -8,7 +8,7 @@ class AnalysisTypeAgent:
     用于自动判断Domain 2分析类型（assignment 或 adherence）。
     """
 
-    def __init__(self, model_name="gemma3:27b", model_provider=ModelProvider.OLLAMA):
+    def __init__(self, model_name="gemma3", model_provider=ModelProvider.OLLAMA):
         self.model_name = model_name
         self.model_provider = model_provider
 

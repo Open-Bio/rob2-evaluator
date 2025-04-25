@@ -19,7 +19,7 @@ def test_domain_randomization_integration():
 
     # 2. 实例化代理
     agent = DomainRandomizationAgent(
-        model_name="gemma3:27b",
+        model_name="gemma3",
         model_provider=ModelProvider.OLLAMA,
     )
 
@@ -70,7 +70,7 @@ def test_domain_randomization_integration():
 def test_domain_randomization_error_cases():
     """测试错误处理"""
     agent = DomainRandomizationAgent(
-        model_name="gemma3:27b",
+        model_name="gemma3",
         model_provider=ModelProvider.OLLAMA,
     )
 

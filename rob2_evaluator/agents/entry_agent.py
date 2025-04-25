@@ -12,7 +12,7 @@ class EntryAgent:
     def __init__(
         self,
         context_window: int = 1,
-        model_name="gemma3:27b",
+        model_name="gemma3",
         model_provider=ModelProvider.OLLAMA,
     ):
         self.context_window = context_window
