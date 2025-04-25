@@ -21,7 +21,9 @@ def render_report(results, output_path="report.html"):
     template_dir = os.path.join(os.path.dirname(__file__))
     env = Environment(loader=FileSystemLoader(template_dir), autoescape=True)
     template = env.get_template("report_template.html.j2")
-    html = template.render(results=results)
+    from rob2_evaluator.schema.rob2_schema import DOMAIN_SCHEMAS
+
+    html = template.render(results=results, domain_schemas=DOMAIN_SCHEMAS)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(html)
     print(f"评估报告已生成: {output_path}")

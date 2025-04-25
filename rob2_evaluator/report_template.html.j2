@@ -12,6 +12,16 @@
         .risk-some { color: #e67e22; font-weight: bold; }
         .risk-low { color: #27ae60; font-weight: bold; }
         .overall-block { background: #f9f9f9; padding: 1em; border-radius: 8px; margin-top: 2em; }
+        .reference-table { 
+            margin-top: 2em;
+            background: #f8f9fa;
+            padding: 1em;
+            border-radius: 8px;
+        }
+        .reference-table h3 {
+            color: #34495e;
+            margin-top: 0;
+        }
     </style>
 </head>
 <body>
@@ -73,5 +83,28 @@
             </div>
         {% endif %}
     {% endfor %}
+    
+    <div class="reference-table">
+        <h3>问题参考表</h3>
+        {% for domain_name, domain_info in domain_schemas.items() %}
+            <h4>{{ domain_info.name }}</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>问题ID</th>
+                        <th>问题内容</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for signal in domain_info.signals %}
+                    <tr>
+                        <td>{{ signal.id }}</td>
+                        <td>{{ signal.text }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
+    </div>
 </body>
 </html>
