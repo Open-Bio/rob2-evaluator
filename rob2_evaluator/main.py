@@ -32,16 +32,16 @@ def render_report(results, output_path="report.html"):
 def process_single_file(input_path, cache_path="output_cache.json"):
     content_list = load_json(input_path)
 
-    # 优先读取缓存
-    if os.path.exists(cache_path):
-        try:
-            with open(cache_path, "r", encoding="utf-8") as f:
-                cached = json.load(f)
-            if isinstance(cached, list) and cached:
-                print(f"已使用缓存: {cache_path}")
-                return cached
-        except Exception as e:
-            print(f"读取缓存失败，重新评估: {e}")
+    # # 优先读取缓存
+    # if os.path.exists(cache_path):
+    #     try:
+    #         with open(cache_path, "r", encoding="utf-8") as f:
+    #             cached = json.load(f)
+    #         if isinstance(cached, list) and cached:
+    #             print(f"已使用缓存: {cache_path}")
+    #             return cached
+    #     except Exception as e:
+    #         print(f"读取缓存失败，重新评估: {e}")
 
     # # 入口专家过滤
     entry_agent = EntryAgent(model_name="gemma3")
