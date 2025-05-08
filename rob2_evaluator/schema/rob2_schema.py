@@ -146,7 +146,7 @@ DOMAIN_SCHEMAS = {
             },
         ],
         "domain_options": ["Low risk", "Some concerns", "High risk"],
-        "domain_name": "Randomization process",
+        "domain_name": "Risk of bias arising from the randomization process",
     },
     "deviation_assignment": {
         "signals": [
@@ -162,18 +162,18 @@ DOMAIN_SCHEMAS = {
             },
             {
                 "id": "q2_3",
-                "text": "Were there deviations from the intended intervention that arose because of the trial context?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If Y/PY/NI to 2.1 or 2.2: Were there deviations from the intended intervention that arose because of the trial context?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
             {
                 "id": "q2_4",
-                "text": "Were these deviations likely to have affected the outcome?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If Y/PY to 2.3: Were these deviations likely to have affected the outcome?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
             {
                 "id": "q2_5",
-                "text": "Were these deviations from intended intervention balanced between groups?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If Y/PY/NI to 2.4: Were these deviations from intended intervention balanced between groups?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
             {
                 "id": "q2_6",
@@ -182,12 +182,12 @@ DOMAIN_SCHEMAS = {
             },
             {
                 "id": "q2_7",
-                "text": "Was there potential for a substantial impact of the failure to analyse participants in the group to which they were randomized?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If N/PN/NI to 2.6: Was there potential for a substantial impact (on the result) of the failure to analyse participants in the group to which they were randomized?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
         ],
         "domain_options": ["Low risk", "Some concerns", "High risk"],
-        "domain_name": "Deviations from intended interventions (effect of assignment)",
+        "domain_name": "Risk of bias due to deviations from the intended interventions (effect of assignment)",
     },
     "deviation_adherence": {
         "signals": [
@@ -203,27 +203,27 @@ DOMAIN_SCHEMAS = {
             },
             {
                 "id": "q2_3",
-                "text": "Were important non-protocol interventions balanced across intervention groups?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If Y/PY/NI to 2.1 or 2.2: Were important non-protocol interventions balanced across intervention groups?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
             {
                 "id": "q2_4",
                 "text": "Were there failures in implementing the intervention that could have affected the outcome?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
             {
                 "id": "q2_5",
-                "text": "Was there non-adherence to the assigned intervention regimen that could have affected participants' outcomes?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "Was there non-adherence to the assigned intervention regimen that could have affected participants’ outcomes?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
             {
                 "id": "q2_6",
-                "text": "Was an appropriate analysis used to estimate the effect of adhering to the intervention?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If N/PN/NI to 2.3, or Y/PY/NI to 2.4 or 2.5: Was an appropriate analysis used to estimate the effect of adhering to the intervention?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
         ],
         "domain_options": ["Low risk", "Some concerns", "High risk"],
-        "domain_name": "Deviations from intended interventions (effect of adherence)",
+        "domain_name": "Risk of bias due to deviations from the intended interventions (effect of adherence)",
     },
     "missing_data": {
         "signals": [
@@ -234,22 +234,22 @@ DOMAIN_SCHEMAS = {
             },
             {
                 "id": "q3_2",
-                "text": "Is there evidence that the result was not biased by missing outcome data?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If N/PN/NI to 3.1: Is there evidence that the result was not biased by missing outcome data?",
+                "options": ["NA", "Y", "PY", "PN", "N"],
             },
             {
                 "id": "q3_3",
-                "text": "Could missingness in the outcome depend on its true value?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If N/PN to 3.2: Could missingness in the outcome depend on its true value?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
             {
                 "id": "q3_4",
-                "text": "Is it likely that missingness in the outcome depended on its true value?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If Y/PY/NI to 3.3: Is it likely that missingness in the outcome depended on its true value?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
         ],
         "domain_options": ["Low risk", "Some concerns", "High risk"],
-        "domain_name": "Missing outcome data",
+        "domain_name": "Risk of bias due to missing outcome data",
     },
     "measurement": {
         "signals": [
@@ -265,33 +265,33 @@ DOMAIN_SCHEMAS = {
             },
             {
                 "id": "q4_3",
-                "text": "Were outcome assessors aware of the intervention received by study participants?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If N/PN/NI to 4.1 and 4.2: Were outcome assessors aware of the intervention received by study participants?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
             {
                 "id": "q4_4",
-                "text": "Could assessment of the outcome have been influenced by knowledge of intervention received?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If Y/PY/NI to 4.3: Could assessment of the outcome have been influenced by knowledge of intervention received?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
             {
                 "id": "q4_5",
-                "text": "Is it likely that assessment of the outcome was influenced by knowledge of intervention received?",
-                "options": ["Y", "PY", "PN", "N", "NI"],
+                "text": "If Y/PY/NI to 4.4: Is it likely that assessment of the outcome was influenced by knowledge of intervention received?",
+                "options": ["NA", "Y", "PY", "PN", "N", "NI"],
             },
         ],
         "domain_options": ["Low risk", "Some concerns", "High risk"],
-        "domain_name": "Measurement of the outcome",
+        "domain_name": "Risk of bias in measurement of the outcome",
     },
     "selection": {
         "signals": [
             {
                 "id": "q5_1",
-                "text": "Were the data that produced this result analysed in accordance with a pre-specified analysis plan?",
+                "text": "Were the data that produced this result analysed in accordance with a pre-specified analysis plan that was finalized before unblinded outcome data were available for analysis?",
                 "options": ["Y", "PY", "PN", "N", "NI"],
             },
             {
                 "id": "q5_2",
-                "text": "Was the result selected from multiple eligible outcome measurements?",
+                "text": "Was the result selected from multiple eligible outcome measurements (e.g. scales, definitions, time points) within the outcome domain?",
                 "options": ["Y", "PY", "PN", "N", "NI"],
             },
             {
@@ -301,7 +301,6 @@ DOMAIN_SCHEMAS = {
             },
         ],
         "domain_options": ["Low risk", "Some concerns", "High risk"],
-        "domain_name": "Selection of the reported result",
+        "domain_name": "Risk of bias in selection of the reported result",
     },
-    # 其它领域可继续添加...
 }
