@@ -36,7 +36,7 @@ def test_evaluate_missing_data_low_risk(sample_content):
         return_value=mock_judgement("Y", "Low risk"),
     ):
         result = agent.evaluate(sample_content)
-        assert result["domain"] == "Missing outcome data"
+        assert result["domain"] == "Risk of bias due to missing outcome data"
         for q in ["q3_1", "q3_2", "q3_3", "q3_4"]:
             assert result["signals"][q]["answer"] == "Y"
         assert result["overall"]["risk"] == "Low risk"

@@ -36,7 +36,7 @@ def test_evaluate_selection_low_risk(sample_content):
         return_value=mock_judgement("Y", "Low risk"),
     ):
         result = agent.evaluate(sample_content)
-        assert result["domain"] == "Selection of the reported result"
+        assert result["domain"] == "Risk of bias in selection of the reported result"
         for q in ["q5_1", "q5_2", "q5_3"]:
             assert result["signals"][q]["answer"] == "Y"
         assert result["overall"]["risk"] == "Low risk"

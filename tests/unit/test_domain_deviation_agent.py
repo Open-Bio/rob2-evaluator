@@ -46,7 +46,7 @@ def test_assignment_low_risk(sample_content):
         result = agent.evaluate(sample_content)
         assert (
             result["domain"]
-            == "Deviations from intended interventions (effect of assignment)"
+            == "Risk of bias due to deviations from the intended interventions (effect of assignment)"
         )
         for q in ["q2_1", "q2_2", "q2_3", "q2_4", "q2_5", "q2_6", "q2_7"]:
             assert result["signals"][q]["answer"] == "Y"
@@ -97,7 +97,7 @@ def test_adherence_low_risk(sample_content):
         result = agent.evaluate(sample_content)
         assert (
             result["domain"]
-            == "Deviations from intended interventions (effect of adherence)"
+            == "Risk of bias due to deviations from the intended interventions (effect of adherence)"
         )
         for q in ["q2_1", "q2_2", "q2_3", "q2_4", "q2_5", "q2_6"]:
             assert result["signals"][q]["answer"] == "Y"

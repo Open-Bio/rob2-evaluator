@@ -29,20 +29,8 @@ def render_report(results, output_path="report.html"):
     print(f"评估报告已生成: {output_path}")
 
 
-def process_single_file(input_path, cache_path="output_cache.json"):
+def process_single_file(input_path):
     content_list = load_json(input_path)
-
-    # # 优先读取缓存
-    # if os.path.exists(cache_path):
-    #     try:
-    #         with open(cache_path, "r", encoding="utf-8") as f:
-    #             cached = json.load(f)
-    #         if isinstance(cached, list) and cached:
-    #             print(f"已使用缓存: {cache_path}")
-    #             return cached
-    #     except Exception as e:
-    #         print(f"读取缓存失败，重新评估: {e}")
-
     # # 入口专家过滤
     entry_agent = EntryAgent(model_name="gemma3")
     relevant_items = entry_agent.filter_relevant(content_list)
@@ -79,12 +67,7 @@ def process_single_file(input_path, cache_path="output_cache.json"):
     # 将汇总结果添加到扁平化的结果数组中
     domain_results.append(overall_result)
 
-    # 写入缓存
-    try:
-        with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump(domain_results, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        print(f"写入缓存失败: {e}")
+
 
     return domain_results
 

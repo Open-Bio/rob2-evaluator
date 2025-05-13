@@ -34,7 +34,7 @@ def test_evaluate_randomization_low_risk(sample_content):
         return_value=mock_judgement("Y", "Low risk"),
     ):
         result = agent.evaluate(sample_content)
-        assert result["domain"] == "Randomization process"
+        assert result["domain"] == "Risk of bias arising from the randomization process"
         for q in ["q1_1", "q1_2", "q1_3"]:
             assert result["signals"][q]["answer"] == "Y"
             assert isinstance(result["signals"][q]["reason"], str)
@@ -75,7 +75,7 @@ def test_evaluate_randomization_empty_items(sample_content):
         return_value=mock_judgement("N", "High risk"),
     ):
         result = agent.evaluate([])
-        assert result["domain"] == "Randomization process"
+        assert result["domain"] == "Risk of bias arising from the randomization process"
         assert "signals" in result
         assert "overall" in result
 
