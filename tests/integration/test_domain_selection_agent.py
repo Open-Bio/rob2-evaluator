@@ -32,7 +32,7 @@ def test_domain_selection_integration():
 
         # 4. 结构验证
         assert "domain" in result
-        assert result["domain"] == "Selection of the reported result"
+        assert result["domain"] == "Risk of bias in selection of the reported result"
         assert "signals" in result
         assert "overall" in result
 

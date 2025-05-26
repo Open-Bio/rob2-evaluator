@@ -38,6 +38,24 @@ def call_llm(
     model_info = get_model_info(model_name)
     llm = get_model(model_name, model_provider)
     
+    # 如果不需要结构化输出，直接返回字符串
+    if pydantic_model is None:
+        for attempt in range(max_retries):
+            try:
+                result = llm.invoke(prompt)
+                # 兼容langchain返回结构
+                if hasattr(result, "content"):
+                    return result.content.strip()
+                return str(result).strip()
+            except Exception as e:
+                if agent_name:
+                    progress.update_status(
+                        agent_name, None, f"Error - retry {attempt + 1}/{max_retries}"
+                    )
+                if attempt == max_retries - 1:
+                    return "no"
+        return "no"
+
     # For non-JSON support models, we can use structured output
     if not (model_info and not model_info.has_json_mode()):
         llm = llm.with_structured_output(

@@ -32,7 +32,7 @@ def test_domain_randomization_integration():
 
         # 4. 结构验证
         assert "domain" in result
-        assert result["domain"] == "Randomization process"
+        assert result["domain"] == "Risk of bias arising from the randomization process"
         assert "signals" in result
         assert "overall" in result
 

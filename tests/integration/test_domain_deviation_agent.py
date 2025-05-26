@@ -32,7 +32,7 @@ def test_domain_deviation_assignment_integration():
         assert "domain" in result
         assert (
             result["domain"]
-            == "Deviations from intended interventions (effect of assignment)"
+            == "Risk of bias due to deviations from the intended interventions (effect of assignment)"
         )
         assert "signals" in result
         assert "overall" in result
@@ -76,7 +76,7 @@ def test_domain_deviation_adherence_integration():
         assert "domain" in result
         assert (
             result["domain"]
-            == "Deviations from intended interventions (effect of adherence)"
+            == "Risk of bias due to deviations from the intended interventions (effect of adherence)"
         )
         assert "signals" in result
         assert "overall" in result
