@@ -8,17 +8,20 @@ from rob2_evaluator.processors.rob2_processor import (
     PDFDocumentProcessor,
     ROB2ContentProcessor,
 )
+from rob2_evaluator.utils.cache import FileCache, cache_result
 
 
 class ROB2Evaluator:
     """ROB2评估器主类"""
 
-    def __init__(self):
+    def __init__(self, cache_dir: str = ".cache"):
         self.document_processor = PDFDocumentProcessor()
         self.content_processor = ROB2ContentProcessor()
         self.evaluation_service = None
         self.report_service = ReportService()
+        self.cache = FileCache(cache_dir)
 
+    @cache_result()
     def process_file(self, input_path: Path) -> List[Dict[str, Any]]:
         """处理单个文件的完整评估流程"""
         # 文档处理
