@@ -2,9 +2,10 @@ from rob2_evaluator.schema.rob2_schema import (
     DOMAIN_SCHEMAS,
     GenericDomainJudgement,
 )
+from rob2_evaluator.config.model_config import ModelConfig
 from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from jinja2 import Template
 
@@ -13,13 +14,16 @@ class DomainAgent:
     def __init__(
         self,
         domain_key: str,
-        model_name="gemma3:27b",
-        model_provider=ModelProvider.OLLAMA,
+        model_name: Optional[str] = None,
+        model_provider: Optional[ModelProvider] = None,
     ):
         self.domain_key = domain_key
         self.schema = DOMAIN_SCHEMAS[domain_key]
-        self.model_name = model_name
-        self.model_provider = model_provider
+
+        config = ModelConfig()
+        # 优先使用传入的参数，其次使用配置值
+        self.model_name = model_name or config.get_model_name()
+        self.model_provider = model_provider or config.get_model_provider()
 
     def evaluate(self, items: List[Dict[str, Any]]):
         signals_schema = self.schema["signals"]
@@ -174,3 +178,34 @@ Return **only** a valid JSON object adhering strictly to the following structure
 
         # print(f"DEBUG: Generated Prompt:\n{prompt[:1000]}...")
         return prompt
+
+
+# 简单使用示例
+if __name__ == "__main__":
+    # 创建域代理实例
+    from rob2_evaluator.schema.rob2_schema import DomainKey
+
+    agent = DomainAgent(domain_key=DomainKey.RANDOMIZATION)
+
+    # 准备测试数据 - 模拟从PDF提取的文本片段
+    test_items = [
+        {"text": "参与者按照计算机生成的随机序列分配到实验组或对照组。", "page_idx": 2},
+        {
+            "text": "分配隐藏采用密封不透明信封方法，研究人员无法预知分配结果。",
+            "page_idx": 2,
+        },
+        {"text": "基线特征在两组间无显著差异，表明随机化成功。", "page_idx": 4},
+    ]
+
+    # 执行评估
+    result = agent.evaluate(test_items)
+
+    # 输出结果
+    print(f"评估域: {result['domain']}")
+    print(f"整体风险: {result['overall']['risk']}")
+    print(f"信号问题数量: {len(result['signals'])}")
+
+    # 显示第一个信号的详细信息
+    first_signal = list(result["signals"].values())[0]
+    print(f"第一个信号答案: {first_signal['answer']}")
+    print(f"证据数量: {len(first_signal['evidence'])}")
