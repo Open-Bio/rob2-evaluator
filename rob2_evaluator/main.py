@@ -9,11 +9,12 @@ from rob2_evaluator.agents.domain_selection import DomainSelectionAgent
 from rob2_evaluator.agents.domain_missing_data import DomainMissingDataAgent
 from rob2_evaluator.agents.entry_agent import EntryAgent
 from rob2_evaluator.agents.analysis_type_agent import AnalysisTypeAgent
-from rob2_evaluator.utils.json_io import load_json
 import logging
 import json
 import os
 from jinja2 import Environment, FileSystemLoader
+from rob2_evaluator.parsers import PDFDocumentParser
+from pathlib import Path
 
 
 def render_report(results, output_path="report.html"):
@@ -30,10 +31,13 @@ def render_report(results, output_path="report.html"):
 
 
 def process_single_file(input_path):
-    content_list = load_json(input_path)
+    input_path = Path(input_path)
+    parser = PDFDocumentParser()
+    # 解析PDF文档
+    text_items = parser.parse_document(input_path)
     # # 入口专家过滤
     entry_agent = EntryAgent()
-    relevant_items = entry_agent.filter_relevant(content_list)
+    relevant_items = entry_agent.filter_relevant(text_items)
     # 自动推断Domain 2分析类型
     analysis_type_agent = AnalysisTypeAgent()
     analysis_type = analysis_type_agent.infer_analysis_type(relevant_items)
@@ -71,7 +75,7 @@ def process_single_file(input_path):
 
 
 if __name__ == "__main__":
-    result = process_single_file("examples/20.Gottlie.json")
+    result = process_single_file("examples/2.Angelone.pdf")
     print(json.dumps(result, indent=4, ensure_ascii=False))
     # 渲染HTML报告
     render_report(result, output_path="report.html")
