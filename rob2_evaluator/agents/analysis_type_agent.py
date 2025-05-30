@@ -1,6 +1,8 @@
 from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
 from typing import List, Dict, Any
+from rob2_evaluator.config.model_config import ModelConfig
+from typing import Optional
 
 
 class AnalysisTypeAgent:
@@ -8,9 +10,15 @@ class AnalysisTypeAgent:
     用于自动判断Domain 2分析类型（assignment 或 adherence）。
     """
 
-    def __init__(self, model_name="gemma3:27b", model_provider=ModelProvider.OLLAMA):
-        self.model_name = model_name
-        self.model_provider = model_provider
+    def __init__(
+        self,
+        model_name: Optional[str] = None,
+        model_provider: Optional[ModelProvider] = None,
+    ):
+        config = ModelConfig()
+        # 优先使用传入的参数，其次使用配置值
+        self.model_name = model_name or config.get_model_name()
+        self.model_provider = model_provider or config.get_model_provider()
 
     def infer_analysis_type(self, items: List[Dict[str, Any]]) -> str:
         context = "\n".join([item.get("text", "") for item in items])

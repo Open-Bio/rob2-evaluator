@@ -2,6 +2,8 @@ from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
 from typing import List, Dict, Any
 import re
+from typing import Optional
+from rob2_evaluator.config.model_config import ModelConfig
 
 
 class EntryAgent:
@@ -14,14 +16,16 @@ class EntryAgent:
     def __init__(
         self,
         context_window: int = 1,
-        model_name="gemma3:27b",
-        model_provider=ModelProvider.OLLAMA,
+        model_name: Optional[str] = None,
+        model_provider: Optional[ModelProvider] = None,
         short_text_threshold: int = 100,
         batch_size: int = 3,
     ):
         self.context_window = context_window
-        self.model_name = model_name
-        self.model_provider = model_provider
+        config = ModelConfig()
+        # 优先使用传入的参数，其次使用配置值
+        self.model_name = model_name or config.get_model_name()
+        self.model_provider = model_provider or config.get_model_provider()
         self.short_text_threshold = short_text_threshold
         self.batch_size = batch_size
 

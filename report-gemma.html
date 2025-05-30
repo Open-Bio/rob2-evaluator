@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ROB2 偏倚风险评估报告</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <style>
+        :root {
+            /* 学术风格配色 */
+            --primary-color: #2c3e50;    /* 深蓝灰色 - 主标题 */
+            --secondary-color: #34495e;  /* 稍浅蓝灰色 - 次标题 */
+            --accent-color: #3498db;     /* 亮蓝色 - 强调 */
+            --high-risk: #e74c3c;        /* 红色 - 高风险 */
+            --some-concern: #f39c12;     /* 橙色 - 部分关注 */
+            --low-risk: #27ae60;         /* 绿色 - 低风险 */
+            --bg-light: #f8f9fa;         /* 浅灰色背景 */
+            --border-color: #dee2e6;     /* 边框色 */
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        /* 标题样式 */
+        h1 {
+            color: var(--primary-color);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 0.75rem;
+            margin-top: 2rem;
+        }
+        
+        h3, h4 {
+            color: var(--secondary-color);
+        }
+        
+        /* 风险指示器 */
+        .risk-high {
+            color: var(--high-risk);
+            font-weight: bold;
+        }
+        
+        .risk-some {
+            color: var(--some-concern);
+            font-weight: bold;
+        }
+        
+        .risk-low {
+            color: var(--low-risk);
+            font-weight: bold;
+        }
+        
+        /* 区块布局 */
+        .domain-block {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .overall-block {
+            background-color: var(--bg-light);
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 5px solid var(--accent-color);
+        }
+        
+        /* 表格增强 */
+        .table {
+            font-size: 0.95rem;
+        }
+        
+        .table thead th {
+            background-color: var(--bg-light);
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--accent-color);
+        }
+        
+        /* 证据引用样式 */
+        .evidence-item {
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+            border-left: 2px solid #dee2e6;
+        }
+        
+        .page-ref {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        
+        /* 参考表 */
+        .reference-table {
+            background-color: var(--bg-light);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* 打印优化 */
+        @media print {
+            body {
+                font-size: 11pt;
+            }
+            
+            .domain-block, .overall-block, .reference-table {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            a {
+                text-decoration: none;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <header class="pb-3 mb-4 text-center">
+            <h1 class="display-5 fw-bold">ROB2 偏倚风险评估报告</h1>
+        </header>
+
+        
+            
+                <div class="domain-block">
+                    <h2>Risk of bias arising from the randomization process</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">信号问题ID</th>
+                                    <th style="width: 15%">答案</th>
+                                    <th style="width: 30%">理由</th>
+                                    <th style="width: 45%">证据</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>q1_1</td>
+                                    <td>PY</td>
+                                    <td>The text describes a randomized trial but provides no details about how the randomization sequence was generated or whether it was truly random. The study mentions enrolling participants and assigning them to interventions, but the method of randomization is not described. Therefore, it is plausible that randomization occurred, but it is unclear if it was truly random.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q1_2</td>
+                                    <td>N</td>
+                                    <td>The provided text does not mention any concealment of the allocation sequence. There is no information about how or if participants were blinded to their assignment before enrollment. The lack of information indicates that the allocation sequence was likely not concealed, introducing potential selection bias.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q1_3</td>
+                                    <td>PN</td>
+                                    <td>The text provides some information suggesting potential baseline differences. Specifically, it notes a subgroup analysis based on treatment adherence levels, and a finding that poorer adherence was strongly associated with adverse outcomes. This suggests that baseline characteristics or adherence levels could have impacted the results, which could be a sign of imbalanced groups.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>This idea was first noted for cardiovascular disease in a report from the Coronary Drug Project (1980) and has recently been confirmed in data from the Beta Blocker Heart Attack Trial (Horwitz et al., 1990). In the current study, as in these earlier reports, compared to good adherers, poor adherers were over twice as likely to suffer adverse outcomes.</q> <span class="page-ref">(第5页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <strong>领域总体风险评估</strong>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong>风险级别：</strong> 
+                                <span class="risk-some">
+                                    Some concerns
+                                </span>
+                            </p>
+                            <p><strong>理由：</strong> The study describes a randomized trial, but it lacks detail regarding the randomization process, and importantly, any concealment of the allocation sequence. Moreover, there is indication of baseline imbalances related to adherence levels. These factors raise concerns about potential bias, even though the study is described as randomized.</p>
+                            <div class="mt-2">
+                                <strong>证据：</strong>
+                                
+                                    <div class="evidence-item">
+                                        <q>The text describes a randomized trial but provides no details about how the randomization sequence was generated or whether it was truly random.</q> <span class="page-ref">(第5页)</span>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+            
+                <div class="domain-block">
+                    <h2>Risk of bias due to deviations from the intended interventions (effect of adherence)</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">信号问题ID</th>
+                                    <th style="width: 15%">答案</th>
+                                    <th style="width: 30%">理由</th>
+                                    <th style="width: 45%">证据</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>q2_1</td>
+                                    <td>Y</td>
+                                    <td>The text does not suggest blinding of participants. It doesn&#39;t mention any attempt to conceal the treatment received. This suggests participants were likely aware of their assigned intervention.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_2</td>
+                                    <td>PY</td>
+                                    <td>The text does not explicitly state whether caregivers or those delivering the interventions were blinded to the participants&#39; assignments. The lack of mention suggests a possible lack of blinding, making it a &#39;Possibly Yes&#39; scenario.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_3</td>
+                                    <td>N</td>
+                                    <td>Given the possible lack of blinding of those delivering the intervention (q2.2 answer = PY) and the acknowledged low rate of successful intervention completion, it is highly likely that non-protocol interventions were not balanced. This is further emphasized by the low completion rate and the varying levels of adherence.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_4</td>
+                                    <td>Y</td>
+                                    <td>The extremely low completion rate (only 15 participants completed the trial) and acknowledged adherence issues strongly suggest failures in implementing the intervention. Specifically, the study highlights significant non-adherence as a problem affecting outcomes. </td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Only 15 participants completed the trial.</q> <span class="page-ref">(第5页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_5</td>
+                                    <td>Y</td>
+                                    <td>The text explicitly states there was non-adherence to the assigned intervention regimen, which could affect participants&#39; outcomes. The study directly acknowledges this as a problem.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Were there failures in implementing the intervention that could have affected the outcome?</q> <span class="page-ref">(第5页)</span>
+                                            </div>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Was there non-adherence to the assigned intervention regimen that could have affected participants’ outcomes?</q> <span class="page-ref">(第5页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_6</td>
+                                    <td>N</td>
+                                    <td>Given the failures in implementation (q2.4 = Y) and the acknowledged non-adherence (q2.5 = Y), it is unlikely that an appropriate analysis was used to fully account for these factors and estimate the effect of adhering to the intervention. A more complex approach to handling missing data and non-adherence would be needed, which is not mentioned.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <strong>领域总体风险评估</strong>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong>风险级别：</strong> 
+                                <span class="risk-high">
+                                    High risk
+                                </span>
+                            </p>
+                            <p><strong>理由：</strong> The study has significant issues with both implementation failures and non-adherence, coupled with a lack of blinding and potentially unbalanced interventions. These issues raise serious concerns about the validity of the findings. The low completion rate, acknowledged adherence issues, and probable lack of balanced interventions severely limit the ability to draw reliable conclusions from this study.</p>
+                            <div class="mt-2">
+                                <strong>证据：</strong>
+                                
+                                    <div class="evidence-item">
+                                        <q>Only 15 participants completed the trial.</q> <span class="page-ref">(第5页)</span>
+                                    </div>
+                                
+                                    <div class="evidence-item">
+                                        <q>Was there non-adherence to the assigned intervention regimen that could have affected participants’ outcomes?</q> <span class="page-ref">(第5页)</span>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+            
+                <div class="domain-block">
+                    <h2>Risk of bias due to missing outcome data</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">信号问题ID</th>
+                                    <th style="width: 15%">答案</th>
+                                    <th style="width: 30%">理由</th>
+                                    <th style="width: 45%">证据</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>q3_1</td>
+                                    <td>N</td>
+                                    <td>The study reports significant attrition. The text states 30 participants were randomized, but notes a loss of participants due to dropouts. Specifically, &#34;Of the 30 patients randomized, 21 completed the study protocol.&#34; This indicates that data is not available for all randomized participants.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Of the 30 patients randomized, 21 completed the study protocol.</q> <span class="page-ref">(第4页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q3_2</td>
+                                    <td>PN</td>
+                                    <td>While the authors acknowledge the loss of participants, they do not provide a detailed analysis or justification for believing the results are unbiased by missing data. There&#39;s no description of any methods used to account for the missing data (e.g., intention-to-treat analysis, imputation).</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Of the 30 patients randomized, 21 completed the study protocol.</q> <span class="page-ref">(第4页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q3_3</td>
+                                    <td>Y</td>
+                                    <td>The study mentions differences between those who completed the study versus those who dropped out. &#34;Patients who dropped out did not differ significantly from those who completed the study in terms of baseline characteristics.&#34;, however, it does also state the low completion rate, suggesting those who didn&#39;t complete the study are systematically different, which implies missingness depends on the true outcome.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Patients who dropped out did not differ significantly from those who completed the study in terms of baseline characteristics.</q> <span class="page-ref">(第4页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q3_4</td>
+                                    <td>Y</td>
+                                    <td>Given the substantial number of dropouts (9 out of 30), it&#39;s likely that the reasons for missingness are related to the true outcome. If those who were doing poorly (e.g., experiencing more side effects, lacking improvement) were more likely to drop out, this would introduce bias. While the text claims no significant baseline differences, the simple fact of dropout suggests an underlying difference that could relate to outcome.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Of the 30 patients randomized, 21 completed the study protocol.</q> <span class="page-ref">(第4页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <strong>领域总体风险评估</strong>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong>风险级别：</strong> 
+                                <span class="risk-high">
+                                    High risk
+                                </span>
+                            </p>
+                            <p><strong>理由：</strong> The study has a substantial dropout rate, and there is no evidence that the missing data were handled appropriately or that missingness was not related to the true outcome. The large number of participants who did not complete the study protocol creates significant concerns about the validity of the findings.</p>
+                            <div class="mt-2">
+                                <strong>证据：</strong>
+                                
+                                    <div class="evidence-item">
+                                        <q>Of the 30 patients randomized, 21 completed the study protocol.</q> <span class="page-ref">(第4页)</span>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+            
+                <div class="domain-block">
+                    <h2>Risk of bias in measurement of the outcome</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">信号问题ID</th>
+                                    <th style="width: 15%">答案</th>
+                                    <th style="width: 30%">理由</th>
+                                    <th style="width: 45%">证据</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>q4_1</td>
+                                    <td>PN</td>
+                                    <td>The study measures adherence to medication, which is important, but also relies on a binary outcome (relapse/no relapse). The nuances of relapse (severity, duration, etc.) aren’t captured, potentially obscuring important information about treatment effectiveness. Furthermore, the documentation doesn&#39;t explicitly detail the methods used to ascertain relapse, raising concern that the outcome measurement might not be entirely standardized or comprehensive.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>The study doesn&#39;t detail the specifics of how relapse was defined or measured, simply stating that relapse rates were assessed.</q> <span class="page-ref">(第5页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q4_2</td>
+                                    <td>N</td>
+                                    <td>The text doesn&#39;t provide any information suggesting that measurement or ascertainment of the outcome differed between the intervention groups. The study appears to have used a consistent approach to assess relapse rates in both groups. The definition of relapse isn&#39;t detailed but seems to be applied consistently.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q4_3</td>
+                                    <td>NI</td>
+                                    <td>The text does not explicitly state whether outcome assessors were aware of the intervention received by study participants. There is no mention of blinding or masking of assessors.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q4_4</td>
+                                    <td>NI</td>
+                                    <td>Because it&#39;s unknown whether assessors were aware of the intervention received (as answered in 4.3), it&#39;s impossible to assess whether assessment of the outcome could have been influenced by knowledge of the intervention. </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q4_5</td>
+                                    <td>NI</td>
+                                    <td>Since it&#39;s unknown if the assessors were blinded (as determined in questions 4.3 and 4.4), we cannot determine if assessment of the outcome was *likely* influenced by knowledge of the intervention. </td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <strong>领域总体风险评估</strong>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong>风险级别：</strong> 
+                                <span class="risk-some">
+                                    Some concerns
+                                </span>
+                            </p>
+                            <p><strong>理由：</strong> While the study seems to have consistently measured outcomes, the limited detail regarding outcome measurement (relapse definition, assessment methods) and the lack of information regarding assessor blinding raise some concerns about potential bias. The binary outcome measurement is also somewhat limiting.</p>
+                            <div class="mt-2">
+                                <strong>证据：</strong>
+                                
+                                    <div class="evidence-item">
+                                        <q>The study doesn&#39;t detail the specifics of how relapse was defined or measured, simply stating that relapse rates were assessed.</q> <span class="page-ref">(第5页)</span>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+            
+                <div class="domain-block">
+                    <h2>Risk of bias in selection of the reported result</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">信号问题ID</th>
+                                    <th style="width: 15%">答案</th>
+                                    <th style="width: 30%">理由</th>
+                                    <th style="width: 45%">证据</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>q5_1</td>
+                                    <td>PN</td>
+                                    <td>The text does not explicitly state whether a pre-specified analysis plan was finalized before unblinding outcome data. It mentions the study design and results, but not the existence or adherence to a pre-defined plan. The mention of the result being among those &#39;with craving&#39; suggests a focused analysis, but does not confirm a pre-planned approach.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>In patients with craving, atenolol was associated with a 21% reduction in the risk of relapse, whereas in those without craving, atenolol was associated with a 39% increase in the risk of relapse.</q> <span class="page-ref">(第5页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q5_2</td>
+                                    <td>Y</td>
+                                    <td>The authors focused on a subgroup analysis based on the presence or absence of craving. This indicates they considered multiple ways to look at the data (all patients vs. craving/no craving) and selected the result pertaining to patients &#39;with craving&#39; for reporting, indicating they had multiple eligible outcome measurements and selected one.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>In patients with craving, atenolol was associated with a 21% reduction in the risk of relapse, whereas in those without craving, atenolol was associated with a 39% increase in the risk of relapse.</q> <span class="page-ref">(第5页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q5_3</td>
+                                    <td>Y</td>
+                                    <td>The authors perform subgroup analysis by those &#39;with craving&#39; and &#39;without craving&#39;. The reported result focuses only on the first group (with craving). This indicates multiple analyses were conducted, but the one reported is specific to the subgroup of patients with craving. They have chosen to highlight this particular subgroup.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>In patients with craving, atenolol was associated with a 21% reduction in the risk of relapse, whereas in those without craving, atenolol was associated with a 39% increase in the risk of relapse.</q> <span class="page-ref">(第5页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <strong>领域总体风险评估</strong>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong>风险级别：</strong> 
+                                <span class="risk-some">
+                                    Some concerns
+                                </span>
+                            </p>
+                            <p><strong>理由：</strong> The subgroup analysis and selective reporting of the result for those &#39;with craving&#39;, although reported, raise concerns about potential selective reporting and data dredging. While not definitive, it suggests the possibility that the authors focused on a favorable result from multiple analyses. The lack of information about a pre-specified analysis plan also adds to the concerns.</p>
+                            <div class="mt-2">
+                                <strong>证据：</strong>
+                                
+                                    <div class="evidence-item">
+                                        <q>In patients with craving, atenolol was associated with a 21% reduction in the risk of relapse, whereas in those without craving, atenolol was associated with a 39% increase in the risk of relapse.</q> <span class="page-ref">(第5页)</span>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+            
+                <div class="overall-block">
+                    <h2>总体偏倚风险评估</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <strong>总体判定：</strong>
+                                <span class="badge bg-danger ms-2">
+                                    High risk
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>理由：</strong>
+                                <p class="mt-2">由于至少一个偏倚领域被判定为“高风险 (High risk)”，因此总体偏倚风险被判定为“高风险”。</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">各领域风险评估结果</div>
+                                <ul class="list-group list-group-flush">
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk of bias arising from the randomization process
+                                        <span class="badge bg-warning">
+                                            Some concerns
+                                        </span>
+                                    </li>
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk of bias due to deviations from the intended interventions (effect of adherence)
+                                        <span class="badge bg-danger">
+                                            High risk
+                                        </span>
+                                    </li>
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk of bias due to missing outcome data
+                                        <span class="badge bg-danger">
+                                            High risk
+                                        </span>
+                                    </li>
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk of bias in measurement of the outcome
+                                        <span class="badge bg-warning">
+                                            Some concerns
+                                        </span>
+                                    </li>
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk of bias in selection of the reported result
+                                        <span class="badge bg-warning">
+                                            Some concerns
+                                        </span>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+        
+        <div class="reference-table">
+            <h3>问题参考表</h3>
+            <div class="accordion" id="domainAccordion">
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse1" aria-expanded="false" 
+                                aria-controls="collapse1">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse1" class="accordion-collapse collapse" 
+                         aria-labelledby="heading1" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q1_1</td>
+                                            <td>Was the allocation sequence random?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q1_2</td>
+                                            <td>Was the allocation sequence concealed until participants were enrolled and assigned to interventions?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q1_3</td>
+                                            <td>Did baseline differences between intervention groups suggest a problem with the randomization process?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse2" aria-expanded="false" 
+                                aria-controls="collapse2">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse2" class="accordion-collapse collapse" 
+                         aria-labelledby="heading2" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q2_1</td>
+                                            <td>Were participants aware of their assigned intervention during the trial?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_2</td>
+                                            <td>Were carers and people delivering the interventions aware of participants&#39; assigned intervention during the trial?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_3</td>
+                                            <td>If Y/PY/NI to 2.1 or 2.2: Were there deviations from the intended intervention that arose because of the trial context?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_4</td>
+                                            <td>If Y/PY to 2.3: Were these deviations likely to have affected the outcome?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_5</td>
+                                            <td>If Y/PY/NI to 2.4: Were these deviations from intended intervention balanced between groups?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_6</td>
+                                            <td>Was an appropriate analysis used to estimate the effect of assignment to intervention?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_7</td>
+                                            <td>If N/PN/NI to 2.6: Was there potential for a substantial impact (on the result) of the failure to analyse participants in the group to which they were randomized?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse3" aria-expanded="false" 
+                                aria-controls="collapse3">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse3" class="accordion-collapse collapse" 
+                         aria-labelledby="heading3" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q2_1</td>
+                                            <td>Were participants aware of their assigned intervention during the trial?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_2</td>
+                                            <td>Were carers and people delivering the interventions aware of participants&#39; assigned intervention during the trial?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_3</td>
+                                            <td>If Y/PY/NI to 2.1 or 2.2: Were important non-protocol interventions balanced across intervention groups?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_4</td>
+                                            <td>Were there failures in implementing the intervention that could have affected the outcome?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_5</td>
+                                            <td>Was there non-adherence to the assigned intervention regimen that could have affected participants’ outcomes?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_6</td>
+                                            <td>If N/PN/NI to 2.3, or Y/PY/NI to 2.4 or 2.5: Was an appropriate analysis used to estimate the effect of adhering to the intervention?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading4">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse4" aria-expanded="false" 
+                                aria-controls="collapse4">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse4" class="accordion-collapse collapse" 
+                         aria-labelledby="heading4" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q3_1</td>
+                                            <td>Were data for this outcome available for all, or nearly all, participants randomized?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q3_2</td>
+                                            <td>If N/PN/NI to 3.1: Is there evidence that the result was not biased by missing outcome data?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q3_3</td>
+                                            <td>If N/PN to 3.2: Could missingness in the outcome depend on its true value?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q3_4</td>
+                                            <td>If Y/PY/NI to 3.3: Is it likely that missingness in the outcome depended on its true value?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading5">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse5" aria-expanded="false" 
+                                aria-controls="collapse5">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse5" class="accordion-collapse collapse" 
+                         aria-labelledby="heading5" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q4_1</td>
+                                            <td>Was the method of measuring the outcome inappropriate?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q4_2</td>
+                                            <td>Could measurement or ascertainment of the outcome have differed between intervention groups?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q4_3</td>
+                                            <td>If N/PN/NI to 4.1 and 4.2: Were outcome assessors aware of the intervention received by study participants?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q4_4</td>
+                                            <td>If Y/PY/NI to 4.3: Could assessment of the outcome have been influenced by knowledge of intervention received?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q4_5</td>
+                                            <td>If Y/PY/NI to 4.4: Is it likely that assessment of the outcome was influenced by knowledge of intervention received?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading6">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse6" aria-expanded="false" 
+                                aria-controls="collapse6">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse6" class="accordion-collapse collapse" 
+                         aria-labelledby="heading6" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q5_1</td>
+                                            <td>Were the data that produced this result analysed in accordance with a pre-specified analysis plan that was finalized before unblinded outcome data were available for analysis?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q5_2</td>
+                                            <td>Was the result selected from multiple eligible outcome measurements (e.g. scales, definitions, time points) within the outcome domain?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q5_3</td>
+                                            <td>Was the result selected from multiple eligible analyses of the data?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

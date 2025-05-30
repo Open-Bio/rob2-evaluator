@@ -37,7 +37,7 @@ def call_llm(
 
     model_info = get_model_info(model_name)
     llm = get_model(model_name, model_provider)
-
+    
     # 如果不需要结构化输出，直接返回字符串
     if pydantic_model is None:
         for attempt in range(max_retries):

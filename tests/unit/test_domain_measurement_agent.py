@@ -35,7 +35,7 @@ def test_evaluate_measurement_all_yes_low_risk(sample_content):
         return_value=mock_judgement("Y", "Low risk"),
     ):
         result = agent.evaluate(sample_content)
-        assert result["domain"] == "Measurement of the outcome"
+        assert result["domain"] == "Risk of bias in measurement of the outcome"
         for q in ["q4_1", "q4_2", "q4_3", "q4_4", "q4_5"]:
             assert result["signals"][q]["answer"] == "Y"
             assert isinstance(result["signals"][q]["reason"], str)
