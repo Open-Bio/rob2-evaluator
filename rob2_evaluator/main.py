@@ -34,13 +34,21 @@ class ROB2Evaluator:
         return self.evaluation_service.evaluate(relevant_items)
 
     def generate_report(
-        self, results: List[Dict[str, Any]], output_path: str = "report.html"
+        self,
+        results: List[Dict[str, Any]],
+        output_path: str = "report.html",
+        report_type: str = "html",
     ) -> None:
-        """生成评估报告"""
+        """
+        生成评估报告
+
+        Args:
+            results: 评估结果数据
+            output_path: 输出文件路径
+            report_type: 报告类型 ("html" 或 "json")
+        """
         self.report_service.generate_report(
-            results=results,
-            template_name="report_template.html.j2",
-            output_path=output_path,
+            results=results, output_path=output_path, report_type=report_type
         )
 
 

@@ -1,8 +1,7 @@
 from typing import List, Dict, Any, Optional
-from rob2_evaluator.agents.domain_agent import DomainAgent
 from rob2_evaluator.agents.aggregator import Aggregator
 from rob2_evaluator.agents.analysis_type_agent import AnalysisTypeAgent
-from rob2_evaluator.factories.domain_agent_factory import DomainAgentFactory
+from rob2_evaluator.factories import DomainAgentFactory
 import logging
 
 
