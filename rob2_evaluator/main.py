@@ -56,4 +56,4 @@ if __name__ == "__main__":
     results = evaluator.process_file(Path("examples/2.Angelone.pdf"))
     print(json.dumps(results, indent=4, ensure_ascii=False))
     # 生成评估报告
-    evaluator.generate_report(results)
+    evaluator.generate_report(results, output_path="output.docx")

@@ -1,4 +1,10 @@
-from rob2_evaluator.reports import BaseReporter, HTMLReporter, JSONReporter
+from rob2_evaluator.reports import (
+    BaseReporter,
+    HTMLReporter,
+    JSONReporter,
+    CSVReporter,
+    WordReporter,
+)
 from rob2_evaluator.config.report_config import (
     ReportConfig,
     HTMLReportConfig,
@@ -42,6 +48,26 @@ class ReporterFactory:
         return JSONReporter()
 
     @staticmethod
+    def create_csv_reporter() -> CSVReporter:
+        """
+        创建CSV报告生成器
+
+        Returns:
+            CSVReporter: CSV报告生成器实例
+        """
+        return CSVReporter()
+
+    @staticmethod
+    def create_word_reporter() -> WordReporter:
+        """
+        创建Word报告生成器
+
+        Returns:
+            WordReporter: Word报告生成器实例
+        """
+        return WordReporter()
+
+    @staticmethod
     def create(report_type: str, config: ReportConfig | None = None) -> BaseReporter:
         """
         根据类型创建报告生成器
@@ -65,5 +91,9 @@ class ReporterFactory:
             return ReporterFactory.create_html_reporter(config.html)
         elif report_type == "json":
             return ReporterFactory.create_json_reporter(config.json)
+        elif report_type == "csv":
+            return ReporterFactory.create_csv_reporter()
+        elif report_type in ["docx", "doc"]:
+            return ReporterFactory.create_word_reporter()
         else:
             raise ValueError(f"不支持的报告类型: {report_type}")

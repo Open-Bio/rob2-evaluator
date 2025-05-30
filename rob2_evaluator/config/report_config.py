@@ -13,8 +13,8 @@ class HTMLReportConfig:
 class JSONReportConfig:
     """JSON报告配置"""
 
-    include_timestamp: bool = True
-    include_summary: bool = True
+    include_timestamp: bool = False
+    include_summary: bool = False
 
 
 @dataclass
