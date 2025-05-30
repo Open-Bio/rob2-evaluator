@@ -40,19 +40,15 @@ class ROB2Evaluator:
         self,
         results: List[Dict[str, Any]],
         output_path: str = "report.html",
-        report_type: str = "html",
     ) -> None:
         """
         生成评估报告
 
         Args:
             results: 评估结果数据
-            output_path: 输出文件路径
-            report_type: 报告类型 ("html" 或 "json")
+            output_path: 输出文件路径，系统将根据文件扩展名自动确定报告类型
         """
-        self.report_service.generate_report(
-            results=results, output_path=output_path, report_type=report_type
-        )
+        self.report_service.generate_report(results=results, output_path=output_path)
 
 
 if __name__ == "__main__":

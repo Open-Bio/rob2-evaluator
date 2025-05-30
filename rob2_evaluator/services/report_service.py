@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Dict, Any, List, Optional
 from rob2_evaluator.factories.reporter_factory import ReporterFactory
 from rob2_evaluator.config.report_config import ReportConfig
@@ -25,7 +26,6 @@ class ReportService:
         self,
         results: List[Dict[str, Any]],
         output_path: str,
-        report_type: str = "html",
         config: Optional[ReportConfig] = None,
     ) -> None:
         """
@@ -34,10 +34,12 @@ class ReportService:
         Args:
             results: 评估结果数据
             output_path: 输出文件路径
-            report_type: 报告类型 ("html" 或 "json")
             config: 报告配置（可选，使用默认配置如果未提供）
         """
         effective_config = config or self.default_config
+
+        # 文件扩展名决定报告类型，移除前置的点号
+        report_type = Path(output_path).suffix.lstrip(".").lower()
 
         reporter = self.reporter_factory.create(
             report_type=report_type, config=effective_config
