@@ -86,7 +86,7 @@ class DomainAgent:
             page = item.get("page_idx", "?")  # 如果意外缺失 page_idx，用 '?' 替代
             # 这里将 page_idx 加 1（如果是数字）
             if isinstance(page, int):
-                page_display = page + 1
+                page_display = page
             else:
                 page_display = page
             text = item.get("text", "")
