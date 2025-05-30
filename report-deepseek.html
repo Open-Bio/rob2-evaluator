@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ROB2 偏倚风险评估报告</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 自定义样式 -->
+    <style>
+        :root {
+            /* 学术风格配色 */
+            --primary-color: #2c3e50;    /* 深蓝灰色 - 主标题 */
+            --secondary-color: #34495e;  /* 稍浅蓝灰色 - 次标题 */
+            --accent-color: #3498db;     /* 亮蓝色 - 强调 */
+            --high-risk: #e74c3c;        /* 红色 - 高风险 */
+            --some-concern: #f39c12;     /* 橙色 - 部分关注 */
+            --low-risk: #27ae60;         /* 绿色 - 低风险 */
+            --bg-light: #f8f9fa;         /* 浅灰色背景 */
+            --border-color: #dee2e6;     /* 边框色 */
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            color: #333;
+            background-color: #fff;
+        }
+        
+        /* 标题样式 */
+        h1 {
+            color: var(--primary-color);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        h2 {
+            color: var(--secondary-color);
+            font-size: 1.5rem;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 0.75rem;
+            margin-top: 2rem;
+        }
+        
+        h3, h4 {
+            color: var(--secondary-color);
+        }
+        
+        /* 风险指示器 */
+        .risk-high {
+            color: var(--high-risk);
+            font-weight: bold;
+        }
+        
+        .risk-some {
+            color: var(--some-concern);
+            font-weight: bold;
+        }
+        
+        .risk-low {
+            color: var(--low-risk);
+            font-weight: bold;
+        }
+        
+        /* 区块布局 */
+        .domain-block {
+            background-color: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .overall-block {
+            background-color: var(--bg-light);
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border-left: 5px solid var(--accent-color);
+        }
+        
+        /* 表格增强 */
+        .table {
+            font-size: 0.95rem;
+        }
+        
+        .table thead th {
+            background-color: var(--bg-light);
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--accent-color);
+        }
+        
+        /* 证据引用样式 */
+        .evidence-item {
+            margin-bottom: 0.5rem;
+            padding-left: 0.5rem;
+            border-left: 2px solid #dee2e6;
+        }
+        
+        .page-ref {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        
+        /* 参考表 */
+        .reference-table {
+            background-color: var(--bg-light);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        /* 打印优化 */
+        @media print {
+            body {
+                font-size: 11pt;
+            }
+            
+            .domain-block, .overall-block, .reference-table {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            a {
+                text-decoration: none;
+                color: #000;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <header class="pb-3 mb-4 text-center">
+            <h1 class="display-5 fw-bold">ROB2 偏倚风险评估报告</h1>
+        </header>
+
+        
+            
+                <div class="domain-block">
+                    <h2>Risk of bias arising from the randomization process</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">信号问题ID</th>
+                                    <th style="width: 15%">答案</th>
+                                    <th style="width: 30%">理由</th>
+                                    <th style="width: 45%">证据</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>q1_1</td>
+                                    <td>Y</td>
+                                    <td>The study explicitly states that patients were randomly assigned to one of three groups, indicating that the allocation sequence was random.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>After  detoxification,  each  of  the  81 patients  (55 males and  26 females)  was randomly  assigned  to one of  three groups: 23 subjects  did not receive  any  pharmacological  treatment,  25  were  treated  with  fluvoxamine, 150mg/day,  and  33  with citalopram.  20mg/day.</q> <span class="page-ref">(第1页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q1_2</td>
+                                    <td>NI</td>
+                                    <td>The study does not provide any information about the concealment of the allocation sequence until participants were enrolled and assigned to interventions.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q1_3</td>
+                                    <td>PN</td>
+                                    <td>The study mentions that age was significantly different among the groups, which could suggest a problem with the randomization process. However, it also states that this variable did not significantly affect the outcome measures.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Age was significantly  different  among the groups; however,  this  variable  did  not  significantly affect the  outcome  measures.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <strong>领域总体风险评估</strong>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong>风险级别：</strong> 
+                                <span class="risk-some">
+                                    Some concerns
+                                </span>
+                            </p>
+                            <p><strong>理由：</strong> While the allocation sequence was random, the lack of information on allocation concealment and the significant baseline difference in age between groups raise some concerns about the randomization process.</p>
+                            <div class="mt-2">
+                                <strong>证据：</strong>
+                                
+                                    <div class="evidence-item">
+                                        <q>After  detoxification,  each  of  the  81 patients  (55 males and  26 females)  was randomly  assigned  to one of  three groups: 23 subjects  did not receive  any  pharmacological  treatment,  25  were  treated  with  fluvoxamine, 150mg/day,  and  33  with citalopram.  20mg/day.</q> <span class="page-ref">(第1页)</span>
+                                    </div>
+                                
+                                    <div class="evidence-item">
+                                        <q>Age was significantly  different  among the groups; however,  this  variable  did  not  significantly affect the  outcome  measures.</q> <span class="page-ref">(第3页)</span>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+            
+                <div class="domain-block">
+                    <h2>Risk of bias due to deviations from the intended interventions (effect of assignment)</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">信号问题ID</th>
+                                    <th style="width: 15%">答案</th>
+                                    <th style="width: 30%">理由</th>
+                                    <th style="width: 45%">证据</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>q2_1</td>
+                                    <td>Y</td>
+                                    <td>Participants were aware of their assigned intervention because they were either given fluvoxamine, citalopram, or no pharmacological treatment, and the nature of the interventions makes it likely they knew which group they were in.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>After detoxification, each of the 81 patients (55 males and 26 females) was randomly assigned to one of three groups: 23 subjects did not receive any pharmacological treatment, 25 were treated with fluvoxamine, 150mg/day, and 33 with citalopram, 20mg/day.</q> <span class="page-ref">(第1页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_2</td>
+                                    <td>PY</td>
+                                    <td>Carers and those delivering the interventions were likely aware of the participants&#39; assigned interventions because the study mentions that all patients received standard cognitive-behavioural therapy, and the medications were administered as part of the study protocol.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>All patients received standard cognitive-behavioural therapy.</q> <span class="page-ref">(第1页)</span>
+                                            </div>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Trial medication, as well as psychological treatment, were started after the detoxification phase, when the patient was abstinent and had stopped any psychotropic treatment.</q> <span class="page-ref">(第2页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_3</td>
+                                    <td>PY</td>
+                                    <td>Deviations from the intended intervention could have arisen because the study context involved a very conservative definition of relapse, where any alcohol intake was considered a relapse and the patient was removed from the study. This could have influenced participants&#39; behavior.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>A very conservative definition of relapse was chosen. Consequently, any alcohol intake was considered a relapse, and the patient was removed from the study.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_4</td>
+                                    <td>PY</td>
+                                    <td>The deviations due to the conservative relapse definition could have affected the outcome, as participants might have underreported alcohol intake to avoid being removed from the study.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>A very conservative definition of relapse was chosen. Consequently, any alcohol intake was considered a relapse, and the patient was removed from the study.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_5</td>
+                                    <td>Y</td>
+                                    <td>The deviations were likely balanced between groups because the same conservative relapse definition was applied uniformly to all groups.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>A very conservative definition of relapse was chosen. Consequently, any alcohol intake was considered a relapse, and the patient was removed from the study.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_6</td>
+                                    <td>Y</td>
+                                    <td>An appropriate analysis was used to estimate the effect of assignment to intervention, as the study employed survival analysis and statistical tests to compare outcomes between groups.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>The survival distribution of the three therapy groups was compared using a Survival Analysis (Statistica for Windows, 1993).</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                            <div class="evidence-item">
+                                                <q>The / -test and one-way ANOVA were used for inter-group comparisons of the same variable (SPSS Inc., 1988).</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q2_7</td>
+                                    <td>N</td>
+                                    <td>There was no potential for a substantial impact of the failure to analyse participants in the group to which they were randomized, as the analysis methods used were appropriate and accounted for group assignments.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>The survival distribution of the three therapy groups was compared using a Survival Analysis (Statistica for Windows, 1993).</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <strong>领域总体风险评估</strong>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong>风险级别：</strong> 
+                                <span class="risk-some">
+                                    Some concerns
+                                </span>
+                            </p>
+                            <p><strong>理由：</strong> While the study used appropriate analysis methods and balanced deviations between groups, the awareness of participants and carers about the assigned interventions, along with the conservative relapse definition, introduces some concerns about the risk of bias due to deviations from intended interventions.</p>
+                            <div class="mt-2">
+                                <strong>证据：</strong>
+                                
+                                    <div class="evidence-item">
+                                        <q>After detoxification, each of the 81 patients (55 males and 26 females) was randomly assigned to one of three groups: 23 subjects did not receive any pharmacological treatment, 25 were treated with fluvoxamine, 150mg/day, and 33 with citalopram, 20mg/day.</q> <span class="page-ref">(第1页)</span>
+                                    </div>
+                                
+                                    <div class="evidence-item">
+                                        <q>A very conservative definition of relapse was chosen. Consequently, any alcohol intake was considered a relapse, and the patient was removed from the study.</q> <span class="page-ref">(第3页)</span>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+            
+                <div class="domain-block">
+                    <h2>Risk of bias due to missing outcome data</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">信号问题ID</th>
+                                    <th style="width: 15%">答案</th>
+                                    <th style="width: 30%">理由</th>
+                                    <th style="width: 45%">证据</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>q3_1</td>
+                                    <td>N</td>
+                                    <td>Data for the outcome was not available for all participants randomized. A significant number of participants dropped out or were removed from the study.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Thirty-eight patients completed the study, 35 were considered as having relapsed, seven (three in the fluvoxamine group and four in the citalopram group) moved to other facilities, and one (citalopram group) dropped out due to side-effects (severe nausea and anorexia) at week 12.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q3_2</td>
+                                    <td>PN</td>
+                                    <td>There is no clear evidence that the result was not biased by missing outcome data. The study mentions that drop-out patients were not entered in the analysis, which could introduce bias.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Drop-out patients (i.e. moved or excluded for side-effects) were not entered in this analysis.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q3_3</td>
+                                    <td>Y</td>
+                                    <td>Missingness in the outcome could depend on its true value since patients who relapsed were removed from the study, and their data was not included in the final analysis.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Consequently, any alcohol intake was considered a relapse, and the patient was removed from the study.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q3_4</td>
+                                    <td>Y</td>
+                                    <td>It is likely that missingness in the outcome depended on its true value because patients who relapsed (a true outcome) were systematically removed from the study, potentially biasing the results.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Consequently, any alcohol intake was considered a relapse, and the patient was removed from the study.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <strong>领域总体风险评估</strong>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong>风险级别：</strong> 
+                                <span class="risk-high">
+                                    High risk
+                                </span>
+                            </p>
+                            <p><strong>理由：</strong> The risk of bias due to missing outcome data is high because a significant proportion of participants were excluded from the analysis after relapsing, and there is no evidence that the missing data was handled in a way that would prevent bias. The exclusion of relapsed patients could lead to an overestimation of the treatment effect.</p>
+                            <div class="mt-2">
+                                <strong>证据：</strong>
+                                
+                                    <div class="evidence-item">
+                                        <q>Drop-out patients (i.e. moved or excluded for side-effects) were not entered in this analysis.</q> <span class="page-ref">(第3页)</span>
+                                    </div>
+                                
+                                    <div class="evidence-item">
+                                        <q>Consequently, any alcohol intake was considered a relapse, and the patient was removed from the study.</q> <span class="page-ref">(第3页)</span>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+            
+                <div class="domain-block">
+                    <h2>Risk of bias in measurement of the outcome</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">信号问题ID</th>
+                                    <th style="width: 15%">答案</th>
+                                    <th style="width: 30%">理由</th>
+                                    <th style="width: 45%">证据</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>q4_1</td>
+                                    <td>N</td>
+                                    <td>The method of measuring the outcome (craving and relapse) was appropriate. Craving was assessed using a standardized 10-step scale, and relapse was defined conservatively as any alcohol intake, which is a clear and objective measure.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Craving was assessed twice a month using a 10-step scale. Every intake of alcohol was considered a relapse and the subject was taken out of the study.</q> <span class="page-ref">(第1页)</span>
+                                            </div>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Craving was assessed by means of a self-administered scale scored from 0 (no craving) to 9 (uncontrollable craving). A very conservative definition of relapse was chosen. Consequently, any alcohol intake was considered a relapse, and the patient was removed from the study.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q4_2</td>
+                                    <td>N</td>
+                                    <td>The measurement of the outcome was standardized across all intervention groups, with the same scale and criteria applied uniformly.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Craving was assessed twice a month using a 10-step scale. Every intake of alcohol was considered a relapse and the subject was taken out of the study.</q> <span class="page-ref">(第1页)</span>
+                                            </div>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Craving was assessed by means of a self-administered scale scored from 0 (no craving) to 9 (uncontrollable craving). A very conservative definition of relapse was chosen. Consequently, any alcohol intake was considered a relapse, and the patient was removed from the study.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q4_3</td>
+                                    <td>N</td>
+                                    <td>The outcome assessor (psychiatrist) was blind to the medication received by the patients, which minimizes the risk of bias in outcome assessment.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Psychiatric assessment was made by a trained psychiatrist (blind to the medication) every 2 weeks starting from the fourth week.</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q4_4</td>
+                                    <td>NI</td>
+                                    <td>Since the outcome assessor was blind to the intervention, the question of whether assessment could have been influenced by knowledge of intervention received is not applicable.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q4_5</td>
+                                    <td>NI</td>
+                                    <td>Since the outcome assessor was blind to the intervention, the question of whether assessment was likely influenced by knowledge of intervention received is not applicable.</td>
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <strong>领域总体风险评估</strong>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong>风险级别：</strong> 
+                                <span class="risk-low">
+                                    Low risk
+                                </span>
+                            </p>
+                            <p><strong>理由：</strong> The method of measuring the outcome was appropriate and standardized across groups, and the outcome assessor was blind to the intervention, minimizing the risk of bias in measurement of the outcome.</p>
+                            <div class="mt-2">
+                                <strong>证据：</strong>
+                                
+                                    <div class="evidence-item">
+                                        <q>Psychiatric assessment was made by a trained psychiatrist (blind to the medication) every 2 weeks starting from the fourth week.</q> <span class="page-ref">(第3页)</span>
+                                    </div>
+                                
+                                    <div class="evidence-item">
+                                        <q>Craving was assessed by means of a self-administered scale scored from 0 (no craving) to 9 (uncontrollable craving). A very conservative definition of relapse was chosen. Consequently, any alcohol intake was considered a relapse, and the patient was removed from the study.</q> <span class="page-ref">(第3页)</span>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+            
+                <div class="domain-block">
+                    <h2>Risk of bias in selection of the reported result</h2>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%">信号问题ID</th>
+                                    <th style="width: 15%">答案</th>
+                                    <th style="width: 30%">理由</th>
+                                    <th style="width: 45%">证据</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>q5_1</td>
+                                    <td>NI</td>
+                                    <td>The study does not provide explicit information about whether the data analysis was pre-specified before unblinded outcome data were available. The methods section describes the statistical tests used but does not mention a pre-specified analysis plan.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>The / -test and one-way ANOVA were used for 2 inter-group comparisons of the same variable (SPSS Inc., 1988). The survival distribution of the three therapy groups was compared using a Survival Analysis (Statistica for Windows, 1993).</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q5_2</td>
+                                    <td>Y</td>
+                                    <td>The study reports multiple outcome measurements, including craving assessed using a 10-step scale and relapse defined as any alcohol intake. The results selected for reporting include continuous abstinence rates and craving scores, indicating selection from multiple eligible outcome measurements.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>Craving was assessed twice a month using a 10-step scale. Every intake of alcohol was considered a relapse and the subject was taken out of the study.</q> <span class="page-ref">(第1页)</span>
+                                            </div>
+                                        
+                                            <div class="evidence-item">
+                                                <q>At the end of the study, both the fluvoxamine and citalopram groups showed a statistically higher rate of continuous abstinence (63.6 and 60.7%, respectively) compared to the group without pharmacological treatment (30.4%).</q> <span class="page-ref">(第1页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>q5_3</td>
+                                    <td>PY</td>
+                                    <td>The study mentions using different statistical tests (t-test, ANOVA, Survival Analysis) and a contrast matrix for comparing groups two by two. This suggests multiple analyses were performed, but it is unclear if the results were selected from these multiple analyses or if all were pre-specified.</td>
+                                    <td>
+                                        
+                                            <div class="evidence-item">
+                                                <q>The / -test and one-way ANOVA were used for 2 inter-group comparisons of the same variable (SPSS Inc., 1988). The survival distribution of the three therapy groups was compared using a Survival Analysis (Statistica for Windows, 1993).</q> <span class="page-ref">(第3页)</span>
+                                            </div>
+                                        
+                                            <div class="evidence-item">
+                                                <q>We used a contrast matrix to test the significance of the different craving values comparing groups two by two.</q> <span class="page-ref">(第4页)</span>
+                                            </div>
+                                        
+                                    </td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <strong>领域总体风险评估</strong>
+                        </div>
+                        <div class="card-body">
+                            <p>
+                                <strong>风险级别：</strong> 
+                                <span class="risk-some">
+                                    Some concerns
+                                </span>
+                            </p>
+                            <p><strong>理由：</strong> There is some concern about the risk of bias in the selection of the reported result due to the lack of clarity on whether the analysis was pre-specified and the potential for selective reporting from multiple outcome measurements and analyses. However, the study does provide detailed methods for the statistical analyses performed.</p>
+                            <div class="mt-2">
+                                <strong>证据：</strong>
+                                
+                                    <div class="evidence-item">
+                                        <q>The / -test and one-way ANOVA were used for 2 inter-group comparisons of the same variable (SPSS Inc., 1988). The survival distribution of the three therapy groups was compared using a Survival Analysis (Statistica for Windows, 1993).</q> <span class="page-ref">(第3页)</span>
+                                    </div>
+                                
+                                    <div class="evidence-item">
+                                        <q>We used a contrast matrix to test the significance of the different craving values comparing groups two by two.</q> <span class="page-ref">(第4页)</span>
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+            
+                <div class="overall-block">
+                    <h2>总体偏倚风险评估</h2>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <strong>总体判定：</strong>
+                                <span class="badge bg-danger ms-2">
+                                    High risk
+                                </span>
+                            </div>
+                            <div class="mb-3">
+                                <strong>理由：</strong>
+                                <p class="mt-2">由于至少一个偏倚领域被判定为“高风险 (High risk)”，因此总体偏倚风险被判定为“高风险”。</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">各领域风险评估结果</div>
+                                <ul class="list-group list-group-flush">
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk of bias arising from the randomization process
+                                        <span class="badge bg-warning">
+                                            Some concerns
+                                        </span>
+                                    </li>
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk of bias due to deviations from the intended interventions (effect of assignment)
+                                        <span class="badge bg-warning">
+                                            Some concerns
+                                        </span>
+                                    </li>
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk of bias due to missing outcome data
+                                        <span class="badge bg-danger">
+                                            High risk
+                                        </span>
+                                    </li>
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk of bias in measurement of the outcome
+                                        <span class="badge bg-success">
+                                            Low risk
+                                        </span>
+                                    </li>
+                                    
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        Risk of bias in selection of the reported result
+                                        <span class="badge bg-warning">
+                                            Some concerns
+                                        </span>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+        
+        
+        <div class="reference-table">
+            <h3>问题参考表</h3>
+            <div class="accordion" id="domainAccordion">
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading1">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse1" aria-expanded="false" 
+                                aria-controls="collapse1">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse1" class="accordion-collapse collapse" 
+                         aria-labelledby="heading1" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q1_1</td>
+                                            <td>Was the allocation sequence random?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q1_2</td>
+                                            <td>Was the allocation sequence concealed until participants were enrolled and assigned to interventions?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q1_3</td>
+                                            <td>Did baseline differences between intervention groups suggest a problem with the randomization process?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading2">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse2" aria-expanded="false" 
+                                aria-controls="collapse2">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse2" class="accordion-collapse collapse" 
+                         aria-labelledby="heading2" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q2_1</td>
+                                            <td>Were participants aware of their assigned intervention during the trial?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_2</td>
+                                            <td>Were carers and people delivering the interventions aware of participants&#39; assigned intervention during the trial?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_3</td>
+                                            <td>If Y/PY/NI to 2.1 or 2.2: Were there deviations from the intended intervention that arose because of the trial context?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_4</td>
+                                            <td>If Y/PY to 2.3: Were these deviations likely to have affected the outcome?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_5</td>
+                                            <td>If Y/PY/NI to 2.4: Were these deviations from intended intervention balanced between groups?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_6</td>
+                                            <td>Was an appropriate analysis used to estimate the effect of assignment to intervention?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_7</td>
+                                            <td>If N/PN/NI to 2.6: Was there potential for a substantial impact (on the result) of the failure to analyse participants in the group to which they were randomized?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading3">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse3" aria-expanded="false" 
+                                aria-controls="collapse3">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse3" class="accordion-collapse collapse" 
+                         aria-labelledby="heading3" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q2_1</td>
+                                            <td>Were participants aware of their assigned intervention during the trial?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_2</td>
+                                            <td>Were carers and people delivering the interventions aware of participants&#39; assigned intervention during the trial?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_3</td>
+                                            <td>If Y/PY/NI to 2.1 or 2.2: Were important non-protocol interventions balanced across intervention groups?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_4</td>
+                                            <td>Were there failures in implementing the intervention that could have affected the outcome?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_5</td>
+                                            <td>Was there non-adherence to the assigned intervention regimen that could have affected participants’ outcomes?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q2_6</td>
+                                            <td>If N/PN/NI to 2.3, or Y/PY/NI to 2.4 or 2.5: Was an appropriate analysis used to estimate the effect of adhering to the intervention?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading4">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse4" aria-expanded="false" 
+                                aria-controls="collapse4">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse4" class="accordion-collapse collapse" 
+                         aria-labelledby="heading4" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q3_1</td>
+                                            <td>Were data for this outcome available for all, or nearly all, participants randomized?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q3_2</td>
+                                            <td>If N/PN/NI to 3.1: Is there evidence that the result was not biased by missing outcome data?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q3_3</td>
+                                            <td>If N/PN to 3.2: Could missingness in the outcome depend on its true value?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q3_4</td>
+                                            <td>If Y/PY/NI to 3.3: Is it likely that missingness in the outcome depended on its true value?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading5">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse5" aria-expanded="false" 
+                                aria-controls="collapse5">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse5" class="accordion-collapse collapse" 
+                         aria-labelledby="heading5" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q4_1</td>
+                                            <td>Was the method of measuring the outcome inappropriate?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q4_2</td>
+                                            <td>Could measurement or ascertainment of the outcome have differed between intervention groups?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q4_3</td>
+                                            <td>If N/PN/NI to 4.1 and 4.2: Were outcome assessors aware of the intervention received by study participants?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q4_4</td>
+                                            <td>If Y/PY/NI to 4.3: Could assessment of the outcome have been influenced by knowledge of intervention received?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q4_5</td>
+                                            <td>If Y/PY/NI to 4.4: Is it likely that assessment of the outcome was influenced by knowledge of intervention received?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading6">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse6" aria-expanded="false" 
+                                aria-controls="collapse6">
+                            
+                        </button>
+                    </h4>
+                    <div id="collapse6" class="accordion-collapse collapse" 
+                         aria-labelledby="heading6" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        <tr>
+                                            <td>q5_1</td>
+                                            <td>Were the data that produced this result analysed in accordance with a pre-specified analysis plan that was finalized before unblinded outcome data were available for analysis?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q5_2</td>
+                                            <td>Was the result selected from multiple eligible outcome measurements (e.g. scales, definitions, time points) within the outcome domain?</td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>q5_3</td>
+                                            <td>Was the result selected from multiple eligible analyses of the data?</td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

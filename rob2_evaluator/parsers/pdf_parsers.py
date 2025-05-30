@@ -1,7 +1,7 @@
 from docling.document_converter import DocumentConverter
-from docling.chunking import HybridChunker
+from docling.chunking import HybridChunker  # type: ignore
 from pathlib import Path
-from typing import List, Dict, Optional, Set
+from typing import List, Dict, Optional, Set, Any
 import logging
 
 
@@ -33,7 +33,7 @@ class PDFDocumentParser:
             logger.setLevel(logging.INFO)
         return logger
 
-    def parse_document(self, file_path: Path) -> List[Dict[str, any]]:
+    def parse_document(self, file_path: Path) -> List[Dict[str, Any]]:
         """
         解析PDF文档并返回过滤后的文本块
 
@@ -120,7 +120,7 @@ class PDFDocumentParser:
         # 检查是否在排除列表中
         return heading in {h.casefold() for h in self.excluded_headings}
 
-    def _extract_text_items(self, chunks: List) -> List[Dict[str, any]]:
+    def _extract_text_items(self, chunks: List) -> List[Dict[str, Any]]:
         """
         从文档块中提取文本和页码信息
 

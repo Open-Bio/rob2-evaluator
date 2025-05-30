@@ -1,81 +1,60 @@
-from rob2_evaluator.agents.aggregator import Aggregator
-from rob2_evaluator.agents.domain_randomization import DomainRandomizationAgent
-from rob2_evaluator.agents.domain_deviation import (
-    DomainDeviationAdherenceAgent,
-    DomainDeviationAssignmentAgent,
-)
-from rob2_evaluator.agents.domain_measurement import DomainMeasurementAgent
-from rob2_evaluator.agents.domain_selection import DomainSelectionAgent
-from rob2_evaluator.agents.domain_missing_data import DomainMissingDataAgent
-from rob2_evaluator.agents.entry_agent import EntryAgent
-from rob2_evaluator.agents.analysis_type_agent import AnalysisTypeAgent
-import logging
-import json
-import os
-from jinja2 import Environment, FileSystemLoader
-from rob2_evaluator.parsers import PDFDocumentParser
 from pathlib import Path
+import json
+from typing import List, Dict, Any
+
+from rob2_evaluator.services.evaluation_service import EvaluationService
+from rob2_evaluator.services.report_service import ReportService
+from rob2_evaluator.processors.rob2_processor import (
+    PDFDocumentProcessor,
+    ROB2ContentProcessor,
+)
 
 
-def render_report(results, output_path="report.html"):
-    """渲染评估结果为HTML报告"""
-    template_dir = os.path.join(os.path.dirname(__file__))
-    env = Environment(loader=FileSystemLoader(template_dir), autoescape=True)
-    template = env.get_template("report_template.html.j2")
-    from rob2_evaluator.schema.rob2_schema import DOMAIN_SCHEMAS
+class ROB2Evaluator:
+    """ROB2评估器主类"""
 
-    html = template.render(results=results, domain_schemas=DOMAIN_SCHEMAS)
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(html)
-    print(f"评估报告已生成: {output_path}")
+    def __init__(self):
+        self.document_processor = PDFDocumentProcessor()
+        self.content_processor = ROB2ContentProcessor()
+        self.evaluation_service = None
+        self.report_service = ReportService()
 
+    def process_file(self, input_path: Path) -> List[Dict[str, Any]]:
+        """处理单个文件的完整评估流程"""
+        # 文档处理
+        text_items = self.document_processor.process_document(input_path)
 
-def process_single_file(input_path):
-    input_path = Path(input_path)
-    parser = PDFDocumentParser()
-    # 解析PDF文档
-    text_items = parser.parse_document(input_path)
-    # # 入口专家过滤
-    entry_agent = EntryAgent()
-    relevant_items = entry_agent.filter_relevant(text_items)
-    # 自动推断Domain 2分析类型
-    analysis_type_agent = AnalysisTypeAgent()
-    analysis_type = analysis_type_agent.infer_analysis_type(relevant_items)
-    logging.info(f"Inferred Domain 2 analysis type: {analysis_type}")
+        # 内容处理
+        relevant_items = self.content_processor.process_content(text_items)
 
-    if analysis_type == "assignment":
-        # Domain 2 分析类型为 assignment
-        domain_agents = [
-            DomainRandomizationAgent(),
-            DomainDeviationAssignmentAgent(),
-            DomainMissingDataAgent(),
-            DomainMeasurementAgent(),
-            DomainSelectionAgent(),
-        ]
-    else:
-        # Domain 2 分析类型为 adherence
-        domain_agents = [
-            DomainRandomizationAgent(),
-            DomainDeviationAdherenceAgent(),
-            DomainMissingDataAgent(),
-            DomainMeasurementAgent(),
-            DomainSelectionAgent(),
-        ]
+        # 执行评估
+        if not self.evaluation_service:
+            self.evaluation_service = EvaluationService()
 
-    domain_results = [agent.evaluate(relevant_items) for agent in domain_agents]
+        return self.evaluation_service.evaluate(relevant_items)
 
-    # 汇总专家评估
-    aggregator = Aggregator()
-    overall_result = aggregator.evaluate(domain_results)
+    def generate_report(
+        self,
+        results: List[Dict[str, Any]],
+        output_path: str = "report.html",
+        report_type: str = "html",
+    ) -> None:
+        """
+        生成评估报告
 
-    # 将汇总结果添加到扁平化的结果数组中
-    domain_results.append(overall_result)
-
-    return domain_results
+        Args:
+            results: 评估结果数据
+            output_path: 输出文件路径
+            report_type: 报告类型 ("html" 或 "json")
+        """
+        self.report_service.generate_report(
+            results=results, output_path=output_path, report_type=report_type
+        )
 
 
 if __name__ == "__main__":
-    result = process_single_file("examples/2.Angelone.pdf")
-    print(json.dumps(result, indent=4, ensure_ascii=False))
-    # 渲染HTML报告
-    render_report(result, output_path="report.html")
+    evaluator = ROB2Evaluator()
+    results = evaluator.process_file(Path("examples/2.Angelone.pdf"))
+    print(json.dumps(results, indent=4, ensure_ascii=False))
+    # 生成评估报告
+    evaluator.generate_report(results)
