@@ -2,6 +2,7 @@ from typing import List, Dict, Any, Optional
 from rob2_evaluator.agents.aggregator import Aggregator
 from rob2_evaluator.agents.analysis_type_agent import AnalysisTypeAgent
 from rob2_evaluator.factories import DomainAgentFactory
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 
 
@@ -27,11 +28,22 @@ class EvaluationService:
         if not self.domain_agents:
             self.domain_agents = DomainAgentFactory.create_agents(analysis_type)
 
-        # 执行领域评估
-        domain_results = [agent.evaluate(content_items) for agent in self.domain_agents]
+        # 多线程并发执行领域评估，结果顺序与 domain_agents 保持一致
+        results: List[Dict[str, Any]] = [None] * len(self.domain_agents)  # type: ignore
+        with ThreadPoolExecutor() as executor:
+            future_to_idx = {
+                executor.submit(agent.evaluate, content_items): idx
+                for idx, agent in enumerate(self.domain_agents)
+            }
+            for future in as_completed(future_to_idx):
+                idx = future_to_idx[future]
+                result = future.result()
+                results[idx] = result
+        # 类型安全：过滤掉 None（理论上不会有）
+        results = [r for r in results if r is not None]
 
         # 汇总评估结果
-        overall_result = self.aggregator.evaluate(domain_results)
-        domain_results.append(overall_result)
+        overall_result = self.aggregator.evaluate(results)
+        results.append(overall_result)
 
-        return domain_results
+        return results
