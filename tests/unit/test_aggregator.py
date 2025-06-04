@@ -1,19 +1,22 @@
-import pytest 
+import pytest
 from rob2_evaluator.agents.aggregator import Aggregator
+
 
 # 辅助函数创建领域结果，使测试更简洁
 def create_domain_result(domain_name: str, risk_level: str) -> dict:
     return {"domain": domain_name, "overall": {"risk": risk_level}}
 
-class TestAggregator:
 
+class TestAggregator:
     def test_high_risk_due_to_one_high_domain(self):
         """
         测试规则1：任一领域为 "High risk"，则总体为 "High risk"。
         """
         domain_results = [
             create_domain_result("Domain 1: Randomization process", "Low risk"),
-            create_domain_result("Domain 2: Deviations from intended interventions", "High risk"),
+            create_domain_result(
+                "Domain 2: Deviations from intended interventions", "High risk"
+            ),
             create_domain_result("Domain 3: Missing outcome data", "Some concerns"),
         ]
         agg = Aggregator()
@@ -21,7 +24,10 @@ class TestAggregator:
         assert result["judgement"]["overall"] == "High risk"
         assert "由于至少一个偏倚领域被判定为“高风险 (High risk)”" in result["reasoning"]
         assert len(result["evidence"]) == 3
-        assert {"domain": "Domain 2: Deviations from intended interventions", "risk": "High risk"} in result["evidence"]
+        assert {
+            "domain": "Domain 2: Deviations from intended interventions",
+            "risk": "High risk",
+        } in result["evidence"]
 
     def test_low_risk_all_domains_low(self):
         """
@@ -29,10 +35,14 @@ class TestAggregator:
         """
         domain_results = [
             create_domain_result("Domain 1: Randomization process", "Low risk"),
-            create_domain_result("Domain 2: Deviations from intended interventions", "Low risk"),
+            create_domain_result(
+                "Domain 2: Deviations from intended interventions", "Low risk"
+            ),
             create_domain_result("Domain 3: Missing outcome data", "Low risk"),
             create_domain_result("Domain 4: Measurement of the outcome", "Low risk"),
-            create_domain_result("Domain 5: Selection of the reported result", "Low risk"),
+            create_domain_result(
+                "Domain 5: Selection of the reported result", "Low risk"
+            ),
         ]
         agg = Aggregator()
         result = agg.evaluate(domain_results)
@@ -53,7 +63,10 @@ class TestAggregator:
         agg = Aggregator()
         result = agg.evaluate(domain_results)
         assert result["judgement"]["overall"] == "Some concerns"
-        assert "由于至少一个偏倚领域被判定为“一些担忧 (Some concerns)”" in result["reasoning"]
+        assert (
+            "由于至少一个偏倚领域被判定为“一些担忧 (Some concerns)”"
+            in result["reasoning"]
+        )
         assert "不满足导致总体“高风险”或“低风险”的条件" in result["reasoning"]
         assert len(result["evidence"]) == 3
 
@@ -69,7 +82,10 @@ class TestAggregator:
         agg = Aggregator()
         result = agg.evaluate(domain_results)
         assert result["judgement"]["overall"] == "Some concerns"
-        assert "由于至少一个偏倚领域被判定为“一些担忧 (Some concerns)”" in result["reasoning"]
+        assert (
+            "由于至少一个偏倚领域被判定为“一些担忧 (Some concerns)”"
+            in result["reasoning"]
+        )
         assert len(result["evidence"]) == 3
 
     def test_high_risk_takes_precedence_over_multiple_some_concerns(self):
@@ -109,5 +125,8 @@ class TestAggregator:
         agg = Aggregator()
         result = agg.evaluate(domain_results)
         assert result["judgement"]["overall"] == "Some concerns"
-        assert "由于至少一个偏倚领域被判定为“一些担忧 (Some concerns)”" in result["reasoning"]
+        assert (
+            "由于至少一个偏倚领域被判定为“一些担忧 (Some concerns)”"
+            in result["reasoning"]
+        )
         assert len(result["evidence"]) == 3
