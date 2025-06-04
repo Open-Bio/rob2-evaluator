@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROB2 偏倚风险评估报告</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .evidence-item {
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #dee2e6;
+            font-size: 0.9em;
+        }
+        .page-ref {
+            color: #6c757d;
+            font-size: 0.8em;
+        }
+        .risk-high {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .risk-some {
+            color: #fd7e14;
+            font-weight: bold;
+        }
+        .risk-low {
+            color: #198754;
+            font-weight: bold;
+        }
+        .domain-block {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #fff;
+        }
+        .overall-block {
+            border: 2px solid #0d6efd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f8f9ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <header class="pb-3 mb-4 text-center">
+            <h1 class="display-5 fw-bold">ROB2 偏倚风险评估报告</h1>
+            <p class="text-muted">共分析 {{ file_results|length }} 个研究</p>
+        </header>
+
+        <!-- 汇总表 -->
+        <div class="summary-section mb-5">
+            <h2>📊 研究汇总</h2>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4 class="mb-0">各领域风险汇总</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>研究文件</th>
+                                    {% for domain_key, domain_info in domain_schemas.items() %}
+                                    {# Assumes domain_header_mapping is passed from Python context #}
+                                    {# Fallback: takes the part after "Risk of bias ..." or uses the key #}
+                                    <th>{{ domain_header_mapping.get(domain_key, domain_info.domain_name.split(' arising from the ')[-1].split(' due to ')[-1].split(' in ')[-1].split(' of the ')[-1].capitalize()) }}</th>
+                                    {% endfor %}
+                                    {# 总体风险表头已移除 #}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for file_id, results in file_results.items() %}
+                                <tr>
+                                    <td><strong>{{ file_id }}</strong></td>
+                                    {% set domain_risks = {} %}
+                                    {# overall_risk_value 相关的逻辑已移除 #}
+                                    
+                                    {% for domain_result in results %}
+                                        {# 只处理非 "Overall risk of bias" 的领域来填充 domain_risks #}
+                                        {% if domain_result.domain != "Overall risk of bias" %}
+                                            {% set _ = domain_risks.update({domain_result.domain: domain_result.overall.risk}) %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    {% for domain_key, domain_info in domain_schemas.items() %}
+                                    <td>
+                                        {% set risk = domain_risks.get(domain_info.domain_name) %}
+                                        {% if risk and risk|string|lower not in ['n/a', 'na', 'not applicable'] %}
+                                        <span class="badge 
+                                            {% if risk == 'High risk' %}bg-danger
+                                            {% elif risk == 'Some concerns' %}bg-warning
+                                            {% elif risk == 'Low risk' %}bg-success
+                                            {% else %}bg-secondary
+                                            {% endif %}">
+                                            {{ risk }}
+                                        </span>
+                                        {% else %}
+                                        <span class="badge bg-secondary"></span>
+                                        {% endif %}
+                                    </td>
+                                    {% endfor %}
+                                    {# 总体风险的单元格已移除 #}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 详细报告 -->
+        <div class="detailed-reports">
+            <h2>📋 详细评估报告</h2>
+            
+            {% for file_id, results in file_results.items() %}
+            <div class="file-section mb-5">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">📄 {{ file_id }}</h3>
+                    </div>
+                    <div class="card-body">
+                        {% for domain_result in results %}
+                            {% if domain_result.domain != "Overall risk of bias" %}
+                                <div class="domain-block mb-4">
+                                    <h4 class="border-bottom pb-2">{{ domain_result.domain }}</h4>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 10%">信号问题ID</th>
+                                                    <th style="width: 15%">答案</th>
+                                                    <th style="width: 30%">理由</th>
+                                                    <th style="width: 45%">证据</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for signal_id, signal in domain_result.signals.items() %}
+                                                <tr>
+                                                    <td>{{ signal_id }}</td>
+                                                    <td>{{ signal.answer }}</td>
+                                                    <td>{{ signal.reason }}</td>
+                                                    <td>
+                                                        {% for ev in signal.evidence %}
+                                                            <div class="evidence-item">
+                                                                <q>{{ ev.text }}</q> <span class="page-ref">(第{{ ev.page_idx }}页)</span>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="card mt-3">
+                                        <div class="card-header">
+                                            <strong>领域总体风险评估</strong>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>
+                                                <strong>风险级别：</strong> 
+                                                <span class="risk-{{ 'high' if domain_result.overall.risk == 'High risk' else 'some' if domain_result.overall.risk == 'Some concerns' else 'low' }}">
+                                                    {{ domain_result.overall.risk }}
+                                                </span>
+                                            </p>
+                                            <p><strong>理由：</strong> {{ domain_result.overall.reason }}</p>
+                                            <div class="mt-2">
+                                                <strong>证据：</strong>
+                                                {% for ev in domain_result.overall.evidence %}
+                                                    <div class="evidence-item">
+                                                        <q>{{ ev.text }}</q> <span class="page-ref">(第{{ ev.page_idx }}页)</span>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="overall-block mb-4">
+                                    <h4 class="border-bottom pb-2">总体偏倚风险评估</h4>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <strong>总体判定：</strong>
+                                                <span class="badge bg-{{ 'danger' if domain_result.judgement.overall == 'High risk' else 'warning' if domain_result.judgement.overall == 'Some concerns' else 'success' }} ms-2">
+                                                    {{ domain_result.judgement.overall }}
+                                                </span>
+                                            </div>
+                                            <div class="mb-3">
+                                                <strong>理由：</strong>
+                                                <p class="mt-2">{{ domain_result.reasoning }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header">各领域风险评估结果</div>
+                                                <ul class="list-group list-group-flush">
+                                                    {% for ev in domain_result.evidence %}
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                        {{ ev.domain }}
+                                                        <span class="badge bg-{{ 'danger' if ev.risk == 'High risk' else 'warning' if ev.risk == 'Some concerns' else 'success' }}">
+                                                            {{ ev.risk }}
+                                                        </span>
+                                                    </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="reference-table">
+            <h3>问题参考表</h3>
+            <div class="accordion" id="domainAccordion">
+                {% for domain_key, domain_info in domain_schemas.items() %}
+                <div class="accordion-item">
+                    <h4 class="accordion-header" id="heading{{ loop.index }}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" 
+                                aria-controls="collapse{{ loop.index }}">
+                            {{ domain_info.domain_name }} {# Use full name for accordion button clarity #}
+                        </button>
+                    </h4>
+                    <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" 
+                         aria-labelledby="heading{{ loop.index }}" data-bs-parent="#domainAccordion">
+                        <div class="accordion-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 15%">问题ID</th>
+                                            <th style="width: 85%">问题内容</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for signal in domain_info.signals %}
+                                        <tr>
+                                            <td>{{ signal.id }}</td>
+                                            <td>{{ signal.text }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
