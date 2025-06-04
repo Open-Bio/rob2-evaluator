@@ -1,4 +1,3 @@
-import pytest
 from rob2_evaluator.agents.aggregator import Aggregator
 
 
