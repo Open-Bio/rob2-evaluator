@@ -24,7 +24,7 @@ class ReportService:
 
     def generate_report(
         self,
-        results: List[Dict[str, Any]],
+        results: Dict[str, List[Dict[str, Any]]],
         output_path: str,
         config: Optional[ReportConfig] = None,
     ) -> None:
@@ -32,7 +32,7 @@ class ReportService:
         生成评估报告
 
         Args:
-            results: 评估结果数据
+            results: 评估结果数据，格式为 {文件标识: [结果列表]}
             output_path: 输出文件路径
             config: 报告配置（可选，使用默认配置如果未提供）
         """

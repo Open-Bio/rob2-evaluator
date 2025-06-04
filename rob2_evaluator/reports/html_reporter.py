@@ -7,7 +7,9 @@ from .base import BaseReporter
 class HTMLReporter(BaseReporter):
     """HTML报告生成器"""
 
-    def __init__(self, template_path: str | Path = "templates/report_template.html.j2"):
+    def __init__(
+        self, template_path: str | Path = "templates/report_template_summary.html.j2"
+    ):
         """
         初始化HTML报告生成器
 
@@ -15,7 +17,7 @@ class HTMLReporter(BaseReporter):
             template_path: 模板文件路径，相对于项目根目录
         """
         # 获取项目根目录
-        project_root = Path(__file__).parent.parent.parent
+        project_root = Path(__file__).parent.parent
         full_template_path = project_root / template_path
         template_dir = full_template_path.parent
 
@@ -28,15 +30,36 @@ class HTMLReporter(BaseReporter):
         )
 
     def generate(
-        self, results: List[Dict[str, Any]], output_path: Union[str, Path]
+        self,
+        file_results: Dict[str, List[Dict[str, Any]]],
+        output_path: Union[str, Path],
     ) -> None:
-        """生成HTML报告"""
+        """
+        生成HTML报告
+
+        Args:
+            file_results: 文件结果字典，格式为 {文件标识: [结果列表]}
+            output_path: 输出文件路径
+        """
         from rob2_evaluator.schema.rob2_schema import DOMAIN_SCHEMAS
 
+        DOMAIN_HEADER_MAPPING = {
+            "randomization": "Randomization",
+            "deviation_assignment": "Deviations (Assignment)",
+            "deviation_adherence": "Deviations (Adherence)",
+            "missing_data": "Missing Data",
+            "measurement": "Measurement",
+            "selection": "Selection",
+        }
         template = self.env.get_template(self.template_name)
-        html = template.render(results=results, domain_schemas=DOMAIN_SCHEMAS)
+        html = template.render(
+            file_results=file_results,
+            domain_schemas=DOMAIN_SCHEMAS,
+            domain_header_mapping=DOMAIN_HEADER_MAPPING,
+        )
 
         output = Path(output_path)
         output.write_text(html, encoding="utf-8")
 
         print(f"HTML报告已生成: {output}")
+        print(f"共处理 {len(file_results)} 个文件")

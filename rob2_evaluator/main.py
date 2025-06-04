@@ -125,7 +125,7 @@ class ROB2Reporter:
 
     def generate_report(
         self,
-        results: List[Dict[str, Any]],
+        results: Dict[str, List[Dict[str, Any]]],
         output_path: str = "report.html",
     ) -> None:
         """生成评估报告"""
@@ -135,11 +135,19 @@ class ROB2Reporter:
 if __name__ == "__main__":
     executor = ROB2Executor()
     reporter = ROB2Reporter()
+
     print("--- Scenario 1: Single file input ---")
     single_file_path = Path("data/english/6.Besson 1998.pdf")
     results_single = executor.execute(single_file_path)
     print("\nExecution Results (Single File):")
     print(json.dumps(results_single, indent=2, ensure_ascii=False))
+    reporter.generate_report(results=results_single, output_path="reports/report.json")
+
+    print("\n--- Scenario 2: Multiple files input ---")
+    folder_path = Path("data/english")
+    results_multiple = executor.execute(folder_path)
+    print("\nExecution Results (Multiple Files):")
+    print(json.dumps(results_multiple, indent=2, ensure_ascii=False))
     reporter.generate_report(
-        results=results_single, output_path="reports/single_file_report.json"
+        results=results_multiple, output_path="reports/summary.html"
     )
