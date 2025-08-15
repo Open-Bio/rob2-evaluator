@@ -128,7 +128,31 @@ The system supports multiple LLM providers:
 - **Google Gemini** (via langchain-google-genai)
 - **Local models** (via Ollama)
 
-Model configuration is centralized in `config/model_config.py`.
+Model configuration is centralized in `config/model_config.py` and can be controlled via environment variables.
+
+### Environment Configuration
+
+The system supports flexible configuration through environment variables:
+
+```bash
+# Copy example configuration
+cp .env.example .env
+
+# Edit .env file with your settings
+```
+
+**Key Configuration Options:**
+
+- `MODEL_PROVIDER`: AI model provider (OLLAMA, ANTHROPIC, OPENAI, etc.)
+- `MODEL_NAME`: Specific model name
+- `ENABLE_REVIEW`: Enable/disable quality review system (default: true)
+- Various API keys for cloud providers
+
+**Quality Review Control:**
+
+The quality review system can be controlled via `ENABLE_REVIEW` environment variable:
+- `ENABLE_REVIEW=true` (default): Full quality control with dual review
+- `ENABLE_REVIEW=false`: Faster processing without review step
 
 ## Testing Strategy
 

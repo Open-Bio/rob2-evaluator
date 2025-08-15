@@ -208,16 +208,56 @@ python rob2_evaluator/main.py *.pdf
 
 ### 配置选项
 
-系统支持多种AI模型提供商：
+#### 环境变量配置
 
-- Anthropic Claude
-- OpenAI GPT
-- DeepSeek
-- Google Gemini  
-- Groq
-- 本地Ollama模型
+系统支持通过环境变量进行灵活配置。复制 `.env.example` 到 `.env` 并修改配置：
 
-通过环境变量或配置文件设置模型和API密钥。
+```bash
+cp .env.example .env
+# 编辑 .env 文件设置你的配置
+```
+
+**主要配置选项：**
+
+```bash
+# AI模型配置
+MODEL_PROVIDER=OLLAMA          # 模型提供商
+MODEL_NAME=gemma3:27b          # 模型名称
+
+# 质量审查控制
+ENABLE_REVIEW=true             # 启用/禁用质量审查系统
+
+# API密钥（云服务商）
+ANTHROPIC_API_KEY=your_key     # Claude API密钥
+OPENAI_API_KEY=your_key        # GPT API密钥
+DEEPSEEK_API_KEY=your_key      # DeepSeek API密钥
+GOOGLE_API_KEY=your_key        # Gemini API密钥
+GROQ_API_KEY=your_key          # Groq API密钥
+
+# 本地模型配置
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+#### 支持的AI模型提供商
+
+- **Anthropic Claude**: claude-3-sonnet-20240229, claude-3-haiku-20240307
+- **OpenAI GPT**: gpt-4, gpt-3.5-turbo  
+- **DeepSeek**: deepseek-chat, deepseek-coder
+- **Google Gemini**: gemini-pro
+- **Groq**: llama3-70b-8192, mixtral-8x7b-32768
+- **本地Ollama**: gemma3:27b, llama3:8b, qwen2:7b
+
+#### 质量审查配置
+
+质量审查系统默认启用，可通过环境变量控制：
+
+```bash
+# 启用质量审查（默认）
+ENABLE_REVIEW=true
+
+# 禁用质量审查（提升处理速度）
+ENABLE_REVIEW=false
+```
 
 ## 开发与测试
 
