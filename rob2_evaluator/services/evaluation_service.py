@@ -1,6 +1,7 @@
 from typing import List, Dict, Any, Optional
 from rob2_evaluator.agents.aggregator import Aggregator
 from rob2_evaluator.agents.analysis_type_agent import AnalysisTypeAgent
+from rob2_evaluator.agents.single_domain_reviewer import DomainReviewerFactory, SingleDomainReviewer
 from rob2_evaluator.factories import DomainAgentFactory
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
@@ -13,9 +14,22 @@ class EvaluationService:
         self,
         analysis_type_agent: Optional[AnalysisTypeAgent] = None,
         aggregator: Optional[Aggregator] = None,
+        enable_review: bool = True,
+        review_standards: Optional[Dict[str, str]] = None,
     ):
         self.analysis_type_agent = analysis_type_agent or AnalysisTypeAgent()
         self.aggregator = aggregator or Aggregator()
+        self.enable_review = enable_review
+        
+        # 创建专门的domain审查器
+        if self.enable_review and review_standards:
+            self.domain_reviewers = DomainReviewerFactory.create_reviewers(review_standards)
+        else:
+            # 使用默认标准创建审查器
+            from rob2_evaluator.config.review_config import ReviewConfig
+            config = ReviewConfig()
+            self.domain_reviewers = DomainReviewerFactory.create_reviewers(config.get_standards())
+        
         self.domain_agents = None
 
     def evaluate(self, content_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -41,6 +55,43 @@ class EvaluationService:
                 results[idx] = result
         # 类型安全：过滤掉 None（理论上不会有）
         results = [r for r in results if r is not None]
+
+        # 审查和重写阶段：使用专门的domain审查器
+        if self.enable_review and self.domain_reviewers:
+            logging.info("开始专项审查和重写阶段...")
+            reviewed_results = [None] * len(results)  # type: ignore
+            
+            # 并发执行审查和重写，使用专门的审查器
+            with ThreadPoolExecutor() as executor:
+                future_to_idx = {}
+                for idx, result in enumerate(results):
+                    # 从结果中提取domain_key
+                    domain_key = result.get('domain_key', f'domain_{idx + 1}')
+                    
+                    # 获取对应的专项审查器
+                    reviewer = self.domain_reviewers.get(domain_key)
+                    if reviewer:
+                        future = executor.submit(reviewer.review_and_revise, result)
+                        future_to_idx[future] = idx
+                    else:
+                        # 如果没有对应的审查器，保持原结果
+                        logging.warning(f"没有找到 {domain_key} 的专项审查器，跳过审查")
+                        reviewed_results[idx] = result
+                
+                # 收集审查结果，保持原有顺序
+                for future in as_completed(future_to_idx):
+                    idx = future_to_idx[future]
+                    try:
+                        reviewed_result = future.result()
+                        reviewed_results[idx] = reviewed_result
+                    except Exception as e:
+                        logging.error(f"审查失败 (domain {idx + 1}): {e}")
+                        # 如果审查失败，使用原始结果
+                        reviewed_results[idx] = results[idx]
+            
+            # 过滤掉None值并更新results
+            results = [r for r in reviewed_results if r is not None]
+            logging.info(f"专项审查完成，处理了 {len(results)} 个domain结果")
 
         # 汇总评估结果
         overall_result = self.aggregator.evaluate(results)

@@ -24,6 +24,9 @@ class DomainAgent:
         # 优先使用传入的参数，其次使用配置值
         self.model_name = model_name or config.get_model_name()
         self.model_provider = model_provider or config.get_model_provider()
+        print(
+            f"Using model: {self.model_name} from provider: {self.model_provider.name}"
+        )
 
     def evaluate(self, items: List[Dict[str, Any]]):
         signals_schema = self.schema["signals"]
@@ -67,6 +70,7 @@ class DomainAgent:
             )
 
         return {
+            "domain_key": self.domain_key,  # 添加domain_key用于质量检查
             "domain": self.schema["domain_name"],
             "signals": processed_signals,
             "overall": {
@@ -99,40 +103,43 @@ class DomainAgent:
         domain_title = self.schema["domain_name"]
 
         # 更新后的 Jinja2 模板字符串
-        prompt_template = """
-# ROB2 Domain Evaluation Expert
+        prompt_template = prompt_template = """
+# Persona and Objective
+You are an expert auditor specializing in the Cochrane Risk of Bias 2 (ROB2) framework. Your objective is to assess the risk of bias for the `{{ domain_title }}` domain by analyzing the provided text and completing the JSON output. You have a deep, built-in understanding of the ROB2 judgment algorithms.
 
-## Task Background
-You are an expert in the ROB2 framework, specializing in assessing risk of bias in randomized controlled trials (RCTs). Your task is to analyze the provided study content and evaluate the risk of bias for the domain: "{{ domain_title }}".
+## Core Directives (You MUST follow these rules)
+1.  **Evidence is Supreme**: Base all judgments **exclusively** on the text provided in the `Evaluation Materials`. Do not use external knowledge or make assumptions about what is "usually" done in research.
+2.  **Absence of Information is NOT Evidence of a Flaw**: This is your most important principle. A 'High Risk' judgment requires **positive textual evidence of a problem** (e.g., the text *states* a flawed method was used). A lack of detail about a correct method should lead to a 'No Information' (`NI`) response for that question, which typically results in an overall judgment of 'Some Concerns', not 'High Risk'.
+3.  **Act as a Literal Auditor, Not an Interpretive Detective**: Your job is to report what the text says, not what you think it implies.
+    - Quote text verbatim for evidence.
+    - Do not infer meaning beyond what is explicitly stated.
+    - If the text is ambiguous, note the ambiguity in your `reason` field rather than defaulting to a worst-case conclusion.
+4.  **Strictly Adhere to the Output Format**: Provide **only** the JSON object in your response. Do not include any introductory text, explanations, or apologies outside of the JSON structure.
 
 ## Evaluation Materials
 The following content has been extracted from the study. Each text block is clearly marked with its source page number using the format `[Page X]`.
 
 {{ context }}
 
-## Analysis Steps
-1.  Carefully read all the provided material, paying close attention to the `[Page X]` markers.
-2.  For each Signal Question below, provide an answer, a detailed reason, and supporting evidence.
-3.  Provide an overall risk assessment for the domain, including the reason and supporting evidence.
-4.  **Crucially**: When providing evidence (`evidence` field), you **must**:
-    *   Quote the text **exactly** as it appears in the Evaluation Materials.
-    *   Include the corresponding `page_idx` (the number X from the `[Page X]` marker) for **each** piece of evidence cited. Find the text segment in the material above and report its associated page number.
+## Task Workflow
+1.  **Review the `Core Directives`** to set your operational parameters.
+2.  **Thoroughly read all `Evaluation Materials`**.
+3.  For each `Signal Question`, provide an `answer`, a detailed `reason`, and supporting `evidence`.
+4.  Apply your internal ROB2 algorithm knowledge to determine the `overall` risk based on your signal question answers.
+5.  Construct the final JSON object exactly as specified below.
 
-## Signal Questions
+## Signal Questions and Options
+- Signal Questions:
 {% for s in signals_schema -%}
-{{ s.id }}: {{ s.text }}
+  - {{ s.id }}: {{ s.text }}
 {% endfor %}
+- Answer Options: {{ signal_options | join('/') }}
 
-Answer options for each signal: {{ signal_options | join('/') }}
-
-## Overall Risk Assessment
-Domain-level risk of bias judgment options:
-{% for opt in domain_options -%}
-- {{ opt }}
-{% endfor %}
+## Overall Risk Assessment Options
+- {{ domain_options | join(', ') }}
 
 ## Required Output Format
-Return **only** a valid JSON object adhering strictly to the following structure. Ensure all evidence includes both `text` and the correct `page_idx`.
+Return **only** a valid JSON object adhering strictly to the following structure.
 
 ```json
 {
@@ -140,26 +147,24 @@ Return **only** a valid JSON object adhering strictly to the following structure
     {% for s in signals_schema -%}
     "{{ s.id }}": {
       "answer": "<Select one: {{ signal_options | join('/') }}>",
-      "reason": "<Your detailed reasoning for the answer>",
+      "reason": "<Your detailed reasoning based strictly on the provided text and core directives>",
       "evidence": [
         {
           "text": "<Exact quote from the Evaluation Materials>",
-          "page_idx": <Integer page number corresponding to the quote's source>
+          "page_idx": "<Integer page number corresponding to the quote's source>"
         }
-        // Add more evidence items if needed, each with text and page_idx
       ]
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   },
   "overall": {
     "risk": "<Select one: {{ domain_options | join('/') }}>",
-    "reason": "<Your detailed reasoning for the overall domain judgment>",
+    "reason": "<Your summary reasoning, explaining how the answers to the signal questions lead to this overall judgment based on the ROB2 algorithm>",
     "evidence": [
       {
-        "text": "<Exact quote supporting the overall judgment>",
-        "page_idx": <Integer page number corresponding to the quote's source>
+        "text": "<The most critical quote(s) supporting the overall judgment>",
+        "page_idx": "<Integer page number for the quote>"
       }
-      // Add more evidence items if needed
     ]
   }
 }

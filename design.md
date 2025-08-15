@@ -62,6 +62,8 @@ DomainAgent [domain_agent.py] (基础代理类)
 ├── DomainMissingDataAgent [domain_missing_data.py] (缺失数据评估)
 ├── DomainMeasurementAgent [domain_measurement.py] (结果测量评估)
 ├── DomainSelectionAgent [domain_selection.py] (结果选择评估)
+├── QualityCheckerAgent [quality_checker_agent.py] (质量审查代理)
+├── SingleDomainReviewer [single_domain_reviewer.py] (单域专项审查器)
 └── Aggregator [aggregator.py] (结果汇总)
 ```
 
@@ -71,6 +73,8 @@ DomainAgent [domain_agent.py] (基础代理类)
 - 采用专家系统设计思想
 - 支持多维度协作评估
 - 结果具有可解释性
+- **双重质控机制**: 评估后进行专业审查
+- **专项审查器**: 针对每个Domain的精确质控
 
 ### 3.2 工厂模式实现 (`factories/`)
 
@@ -80,6 +84,9 @@ DomainAgentFactory [domain_agent_factory.py]
 
 ReporterFactory [reporter_factory.py]
 └── create_reporter() : 创建报告生成器
+
+DomainReviewerFactory [single_domain_reviewer.py]
+└── create_reviewers() : 创建审查代理实例
 ```
 
 **设计优势:**
@@ -87,13 +94,15 @@ ReporterFactory [reporter_factory.py]
 - 统一的对象创建接口
 - 支持动态代理配置
 - 便于系统扩展
+- **质量审查集成**: 自动创建对应的审查代理
 
 ### 3.3 服务层架构 (`services/`)
 
 ```
 EvaluationService [evaluation_service.py]
 ├── evaluate() : 评估流程控制
-└── _process_domain() : 单域评估处理
+├── _process_domain() : 单域评估处理  
+└── 多线程并发处理 : ThreadPoolExecutor支持
 
 PDFService [pdf_service.py]
 └── extract_text() : PDF文本提取
@@ -146,6 +155,11 @@ ModelConfig [model_config.py]
 
 ReportConfig [report_config.py]
 └── get_report_settings() : 获取报告配置
+
+ReviewConfig [review_config.py]
+├── get_standards() : 获取审查标准
+├── load_custom_standards() : 加载自定义标准
+└── save_to_file() : 保存配置文件
 ```
 
 ### 3.7 工具支持 (`utils/`)
@@ -189,7 +203,9 @@ ROB2Executor.execute()
    - EntryAgent.filter_relevant() 相关性筛选
    - AnalysisTypeAgent.infer_analysis_type() 分析类型判断
    - DomainAgentFactory.create_agents() 创建评估代理
-   - 各DomainAgent.evaluate() 执行评估
+   - 并发执行DomainAgent.evaluate() (ThreadPoolExecutor)
+   - DomainReviewerFactory.create_reviewers() 创建审查代理
+   - 各SingleDomainReviewer.review_and_revise() 质量审查
    - Aggregator.evaluate() 汇总结果
 4. ReportService.generate_report() 生成报告
 ```
@@ -296,3 +312,61 @@ ROB2Executor.execute()
 - 支持新的文档格式
 - 集成更多AI模型
 - 添加新的评估标准
+
+## 10. v0.2.0版本新特性
+
+### 10.1 质量审查系统
+
+**核心改进：**
+- 引入双重质控机制，每个Domain评估结果都经过专业审查
+- `QualityCheckerAgent`：通用质量审查代理，支持多Domain审查
+- `SingleDomainReviewer`：专项审查器，针对特定Domain的精确质控
+- `ReviewConfig`：可配置的审查标准，支持自定义审查规则
+
+**技术实现：**
+- 基于ROB2框架的专业审查标准
+- 自动检测评估结果中的逻辑不一致和质量问题
+- 智能修正机制，自动提供高质量的修正建议
+- 完整的审查过程追踪和记录
+
+### 10.2 高性能并发处理
+
+**性能优化：**
+- 使用`ThreadPoolExecutor`实现Domain代理的并发执行
+- 智能任务调度，保证结果顺序一致性
+- 显著缩短大型文档的处理时间
+- 支持批量文件的并行处理
+
+**批量处理能力：**
+- 支持多PDF文件同时处理
+- 智能文件去重和缓存机制
+- 统一的汇总报告生成
+- 进度追踪和状态监控
+
+### 10.3 增强的报告系统
+
+**报告模板升级：**
+- 新增汇总报告模板 (`report_template_summary.html.j2`)
+- 支持多文件分析结果的统一展示
+- 改进的可视化效果和交互体验
+- 更好的风险评估数据展示
+
+**报告格式扩展：**
+- 优化的HTML报告，支持汇总视图
+- 改进的JSON数据结构，便于程序化处理
+- 增强的CSV格式，支持更复杂的数据分析
+- 更专业的Word文档格式
+
+### 10.4 架构改进
+
+**模块化增强：**
+- 更清晰的责任分离和接口定义
+- 改进的依赖注入机制
+- 更好的错误处理和异常管理
+- 增强的可测试性和可维护性
+
+**配置管理：**
+- 新增`ReviewConfig`支持审查标准的配置化
+- 更灵活的模型配置选项
+- 支持运行时配置的动态加载
+- 改进的环境变量和配置文件支持

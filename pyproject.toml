@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rob2-evaluator"
-version = "0.1.0"
+version = "0.2.0"
 description = "A modular Python project for ROB2 evaluation with multiple experts."
 authors = ["FanXingfu <fanxingfu3344@gmail.com>"]
 readme = "README.md"
@@ -25,6 +25,7 @@ questionary = "^2.1.0"
 rich = "^13.9.4"
 langchain-google-genai = "^2.0.11"
 jinja2 = "^3.1.6"
+httpx = {extras = ["socks"], version = "^0.28.1"}
 
 
 [tool.poetry.group.dev.dependencies]

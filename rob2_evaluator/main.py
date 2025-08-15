@@ -137,17 +137,17 @@ if __name__ == "__main__":
     reporter = ROB2Reporter()
 
     print("--- Scenario 1: Single file input ---")
-    single_file_path = Path("data/english/6.Besson 1998.pdf")
+    single_file_path = Path("data/english/2.Angelone 1998.pdf")
     results_single = executor.execute(single_file_path)
     print("\nExecution Results (Single File):")
     print(json.dumps(results_single, indent=2, ensure_ascii=False))
-    reporter.generate_report(results=results_single, output_path="reports/report.json")
+    reporter.generate_report(results=results_single, output_path="reports/report.html")
 
-    print("\n--- Scenario 2: Multiple files input ---")
-    folder_path = Path("data/english")
-    results_multiple = executor.execute(folder_path)
-    print("\nExecution Results (Multiple Files):")
-    print(json.dumps(results_multiple, indent=2, ensure_ascii=False))
-    reporter.generate_report(
-        results=results_multiple, output_path="reports/summary.html"
-    )
+    # print("\n--- Scenario 2: Multiple files input ---")
+    # folder_path = Path("data/english")
+    # results_multiple = executor.execute(folder_path)
+    # print("\nExecution Results (Multiple Files):")
+    # print(json.dumps(results_multiple, indent=2, ensure_ascii=False))
+    # reporter.generate_report(
+    #     results=results_multiple, output_path="reports/summary.html"
+    # )
