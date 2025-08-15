@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 from rob2_evaluator.config.model_config import ModelConfig
 from rob2_evaluator.utils.llm import call_llm
 from rob2_evaluator.llm.models import ModelProvider
-from rob2_evaluator.schema.rob2_schema import GenericDomainJudgement
+from rob2_evaluator.schema.rob2_schema import GenericDomainJudgement, DomainKey
 
 
 class ReviewResult(BaseModel):
@@ -214,7 +214,14 @@ class DomainReviewerFactory:
         common_standard = review_standards.get('default', '')
         
         # 为每个domain创建专门的审查器
-        domain_keys = ['domain_1', 'domain_2', 'domain_3', 'domain_4', 'domain_5']
+        domain_keys = [
+            DomainKey.RANDOMIZATION,
+            DomainKey.DEVIATION_ASSIGNMENT, 
+            DomainKey.DEVIATION_ADHERENCE,
+            DomainKey.MISSING_DATA,
+            DomainKey.MEASUREMENT,
+            DomainKey.SELECTION
+        ]
         for domain_key in domain_keys:
             domain_standard = review_standards.get(domain_key, '')
             if domain_standard:  # 只为有标准的domain创建审查器

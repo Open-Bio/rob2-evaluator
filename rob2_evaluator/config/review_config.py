@@ -7,64 +7,67 @@ ROB2评估审查标准配置模块
 from typing import Dict, Optional
 import json
 from pathlib import Path
+from rob2_evaluator.schema.rob2_schema import DomainKey
 
 
 class ReviewConfig:
     """审查配置管理类"""
-    
+
     def __init__(self, config_path: Optional[str] = None):
         """
         初始化审查配置
-        
+
         Args:
             config_path: 自定义配置文件路径，如果为None则使用默认配置
         """
         self.config_path = config_path
         self._standards = self._load_standards()
-    
+
     def _load_standards(self) -> Dict[str, str]:
         """加载审查标准"""
         if self.config_path and Path(self.config_path).exists():
             return self._load_from_file(self.config_path)
         else:
             return self._get_default_standards()
-    
+
     def _load_from_file(self, file_path: str) -> Dict[str, str]:
         """从文件加载审查标准"""
         try:
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, "r", encoding="utf-8") as f:
                 config_data = json.load(f)
-                return config_data.get('review_standards', self._get_default_standards())
+                return config_data.get(
+                    "review_standards", self._get_default_standards()
+                )
         except Exception as e:
             print(f"加载配置文件失败 {file_path}: {e}")
             return self._get_default_standards()
-    
+
     def get_standards(self) -> Dict[str, str]:
         """获取审查标准"""
         return self._standards.copy()
-    
+
     def update_standard(self, domain_key: str, standard: str) -> None:
         """更新特定domain的审查标准"""
         self._standards[domain_key] = standard
-    
+
     def save_to_file(self, file_path: str) -> None:
         """保存配置到文件"""
         config_data = {
             "review_standards": self._standards,
-            "description": "ROB2评估审查标准配置文件"
+            "description": "ROB2评估审查标准配置文件",
         }
-        
+
         try:
-            with open(file_path, 'w', encoding='utf-8') as f:
+            with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(config_data, f, ensure_ascii=False, indent=2)
             print(f"配置已保存到: {file_path}")
         except Exception as e:
             print(f"保存配置文件失败: {e}")
-    
+
     def _get_default_standards(self) -> Dict[str, str]:
         """获取默认的审查标准"""
         return {
-            'domain_1': """
+            DomainKey.RANDOMIZATION: """
 # Domain 1 (随机化过程) 审查标准：
 
 ## 必须检查的要点：
@@ -94,8 +97,7 @@ class ReviewConfig:
 - 混淆随机序列生成和分配隐藏
 - 忽视基线失衡的重要性
 """,
-            
-            'domain_2': """
+            DomainKey.DEVIATION_ASSIGNMENT: """
 # Domain 2 (意向偏差) 审查标准：
 
 ## 分析类型判断：
@@ -127,8 +129,38 @@ class ReviewConfig:
 - 忽视ITT分析的重要性
 - 低估偏离的潜在影响
 """,
-            
-            'domain_3': """
+            DomainKey.DEVIATION_ADHERENCE: """
+# Domain 2 (意向偏差-依从性分析) 审查标准：
+
+## 分析类型判断：
+- **Adherence分析**: 关注依从干预的效果
+
+## 必须评估的要点：
+1. **依从性偏离识别**
+   - 未按计划接受干预的参与者比例
+   - 依从性相关的偏离类型
+   - 依从性偏离是否与结果相关
+
+2. **分析方法**
+   - Per-protocol分析的实施
+   - 依从性调整分析的恰当性
+   - 偏离处理的合理性
+
+3. **偏离影响**
+   - 依从性偏离对结果的潜在影响
+   - 组间依从性的比较
+
+## 判断标准：
+- Low risk: 依从性好或偏离不影响结果
+- Some concerns: 有依从性问题但影响有限
+- High risk: 严重依从性问题且可能影响结果
+
+## 必须纠正的错误：
+- 混淆assignment和adherence分析
+- 忽视依从性对结果的影响
+- 低估依从性偏离的重要性
+""",
+            DomainKey.MISSING_DATA: """
 # Domain 3 (缺失数据) 审查标准：
 
 ## 必须评估的要点：
@@ -157,8 +189,7 @@ class ReviewConfig:
 - 未充分评估敏感性分析
 - 混淆不同类型的缺失数据
 """,
-            
-            'domain_4': """
+            DomainKey.MEASUREMENT: """
 # Domain 4 (结果测量) 审查标准：
 
 ## 必须评估的要点：
@@ -187,8 +218,7 @@ class ReviewConfig:
 - 高估盲法的保护效果
 - 忽视测量时机的重要性
 """,
-            
-            'domain_5': """
+            DomainKey.SELECTION: """
 # Domain 5 (结果选择) 审查标准：
 
 ## 必须评估的要点：
@@ -217,8 +247,7 @@ class ReviewConfig:
 - 低估多重比较的影响
 - 混淆主要和次要结局
 """,
-            
-            'default': """
+            "default": """
 # 通用ROB2审查标准：
 
 ## 基本要求：
@@ -239,7 +268,7 @@ class ReviewConfig:
 4. overall risk必须基于signals的综合分析
 
 请严格按照ROB2框架标准进行审查和重写。
-"""
+""",
         }
 
 

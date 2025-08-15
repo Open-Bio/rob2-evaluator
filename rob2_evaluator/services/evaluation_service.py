@@ -3,7 +3,6 @@ from rob2_evaluator.agents.aggregator import Aggregator
 from rob2_evaluator.agents.analysis_type_agent import AnalysisTypeAgent
 from rob2_evaluator.agents.single_domain_reviewer import (
     DomainReviewerFactory,
-    SingleDomainReviewer,
 )
 from rob2_evaluator.factories import DomainAgentFactory
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -84,7 +83,11 @@ class EvaluationService:
                 future_to_idx = {}
                 for idx, result in enumerate(results):
                     # 从结果中提取domain_key
-                    domain_key = result.get("domain_key", f"domain_{idx + 1}")
+                    domain_key = result.get("domain_key")
+                    if not domain_key:
+                        logging.warning(f"结果 {idx + 1} 缺少domain_key，跳过审查")
+                        reviewed_results[idx] = result
+                        continue
 
                     # 获取对应的专项审查器
                     reviewer = self.domain_reviewers.get(domain_key)
