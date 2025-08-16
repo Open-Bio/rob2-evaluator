@@ -1,7 +1,8 @@
 """
-ROB2评估审查标准配置模块
+ROB2 Evaluation Review Standards Configuration Module
 
-此模块提供了配置审查标准的功能，允许用户自定义每个domain的检查标准。
+This module provides configuration functionality for review standards,
+allowing users to customize decision path checking standards for each domain.
 """
 
 from typing import Dict, Optional
@@ -11,27 +12,27 @@ from rob2_evaluator.schema.rob2_schema import DomainKey
 
 
 class ReviewConfig:
-    """审查配置管理类"""
+    """Review configuration management class for decision path validation"""
 
     def __init__(self, config_path: Optional[str] = None):
         """
-        初始化审查配置
+        Initialize review configuration
 
         Args:
-            config_path: 自定义配置文件路径，如果为None则使用默认配置
+            config_path: Custom configuration file path, uses default if None
         """
         self.config_path = config_path
         self._standards = self._load_standards()
 
     def _load_standards(self) -> Dict[str, str]:
-        """加载审查标准"""
+        """Load review standards"""
         if self.config_path and Path(self.config_path).exists():
             return self._load_from_file(self.config_path)
         else:
             return self._get_default_standards()
 
     def _load_from_file(self, file_path: str) -> Dict[str, str]:
-        """从文件加载审查标准"""
+        """Load review standards from file"""
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 config_data = json.load(f)
@@ -39,253 +40,223 @@ class ReviewConfig:
                     "review_standards", self._get_default_standards()
                 )
         except Exception as e:
-            print(f"加载配置文件失败 {file_path}: {e}")
+            print(f"Failed to load config file {file_path}: {e}")
             return self._get_default_standards()
 
     def get_standards(self) -> Dict[str, str]:
-        """获取审查标准"""
+        """Get review standards"""
         return self._standards.copy()
 
     def update_standard(self, domain_key: str, standard: str) -> None:
-        """更新特定domain的审查标准"""
+        """Update review standard for specific domain"""
         self._standards[domain_key] = standard
 
     def save_to_file(self, file_path: str) -> None:
-        """保存配置到文件"""
+        """Save configuration to file"""
         config_data = {
             "review_standards": self._standards,
-            "description": "ROB2评估审查标准配置文件",
+            "description": "ROB2 Evaluation Decision Path Review Standards",
+            "version": "1.0",
+            "note": "These standards define the mandatory decision paths for each domain",
         }
 
         try:
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(config_data, f, ensure_ascii=False, indent=2)
-            print(f"配置已保存到: {file_path}")
+            print(f"Configuration saved to: {file_path}")
         except Exception as e:
-            print(f"保存配置文件失败: {e}")
+            print(f"Failed to save config file: {e}")
 
     def _get_default_standards(self) -> Dict[str, str]:
-        """获取默认的审查标准"""
+        """Get default review standards with decision paths"""
         return {
             DomainKey.RANDOMIZATION: """
-# Domain 1 (随机化过程) 审查标准：
+## Decision Paths for Randomization Domain
 
-## 必须检查的要点：
-1. **随机序列生成方法**
-   - 计算机随机数生成器（低风险）
-   - 随机数表（低风险）
-   - 抛硬币、掷骰子（低风险）
-   - 简单交替、日期/姓名（高风险）
-   - 信息不充分（一些担忧）
+**PATH_1**: q1_1[Y/PY/NI] -> q1_3[N/PN/NI] -> Low risk
+Description: Proper randomization with no baseline imbalance
 
-2. **分配隐藏**
-   - 中央随机化、密封信封（低风险）
-   - 开放随机化表（高风险）
-   - 信息不充分（一些担忧）
+**PATH_2**: q1_1[Y/PY/NI] -> q1_3[Y/PY] -> Some concerns
+Description: Proper randomization but with baseline imbalance
 
-3. **基线特征平衡**
-   - 组间基线特征是否平衡
-   - 重要预后因子的分布
+**PATH_3**: q1_1[N/PN] -> High risk
+Description: No or inadequate randomization
 
-## 判断标准：
-- Low risk: 随机序列生成恰当且分配隐藏充分
-- Some concerns: 随机化信息不充分但无明显问题
-- High risk: 随机化方法不当或分配隐藏失败
+**PATH_4**: q1_2[Y/PY] -> Low risk
+Description: Adequate allocation concealment
 
-## 常见错误要求纠正：
-- 仅因提到"随机"就判断为低风险
-- 混淆随机序列生成和分配隐藏
-- 忽视基线失衡的重要性
+**PATH_5**: q1_2[NI] -> q1_3[N/PN/NI] -> Low risk
+Description: No information on concealment but no baseline issues
+
+**PATH_6**: q1_2[NI] -> q1_3[Y/PY] -> High risk
+Description: No information on concealment with baseline imbalance
+
+**PATH_7**: q1_2[N/PN] -> High risk
+Description: Inadequate allocation concealment
+
+## Decision Logic
+1. First check q1_1 (randomization method)
+2. If q1_1 is N/PN, result is High risk (PATH_3)
+3. If q1_1 is Y/PY/NI, check q1_2 (allocation concealment)
+4. Follow the appropriate path based on q1_2 and q1_3 values
 """,
             DomainKey.DEVIATION_ASSIGNMENT: """
-# Domain 2 (意向偏差) 审查标准：
+## Decision Paths for Deviations from Intended Interventions (Assignment)
 
-## 分析类型判断：
-- **Assignment分析**: 关注分配到干预组的效果
-- **Adherence分析**: 关注依从干预的效果
+**PATH_1**: (2.1 & 2.2)[All N/PN] -> Low risk
+Description: No deviations from intended intervention
 
-## 必须评估的要点：
-1. **偏离识别**
-   - 偏离干预的参与者比例
-   - 偏离类型（停止干预、接受其他干预等）
-   - 偏离是否与结果相关
+**PATH_2**: (2.1 & 2.2)[Any Y/PY/NI] -> 2.3[N/PN] -> Low risk
+Description: Deviations occurred but appropriately analyzed
 
-2. **分析方法**
-   - ITT分析的实施充分性
-   - Per-protocol分析的合理性
-   - 偏离处理的恰当性
+**PATH_3**: (2.1 & 2.2)[Any Y/PY/NI] -> 2.3[NI] -> 2.4[N/PN] -> Some concerns
+Description: No info on analysis but deviations unlikely to affect outcome
 
-3. **偏离影响**
-   - 偏离对结果的潜在影响
-   - 组间偏离的平衡性
+**PATH_4**: (2.1 & 2.2)[Any Y/PY/NI] -> 2.3[NI] -> 2.4[Y/PY] -> 2.5[N/PN/NI] -> Some concerns
+Description: Deviations could affect outcome but balanced between groups
 
-## 判断标准：
-- Low risk: 无重要偏离或偏离不影响结果
-- Some concerns: 有偏离但影响可能有限
-- High risk: 重要偏离且可能实质性影响结果
+**PATH_5**: (2.1 & 2.2)[Any Y/PY/NI] -> 2.3[NI] -> 2.4[Y/PY] -> 2.5[Y/PY] -> High risk
+Description: Deviations likely affected outcome and imbalanced
 
-## 必须纠正的错误：
-- 混淆assignment和adherence分析
-- 忽视ITT分析的重要性
-- 低估偏离的潜在影响
+**PATH_6**: (2.1 & 2.2)[Any Y/PY/NI] -> 2.3[Y/PY] -> Some concerns
+Description: Inappropriate analysis used
+
+**PATH_7**: 2.6[N/PN/NI] -> Low risk
+Description: No failure in implementing intervention
+
+**PATH_8**: 2.6[Y/PY] -> 2.7[N/PN] -> Some concerns
+Description: Implementation failure but unlikely to affect outcome
+
+**PATH_9**: 2.6[Y/PY] -> 2.7[Y/PY/NI] -> High risk
+Description: Implementation failure likely affected outcome
 """,
             DomainKey.DEVIATION_ADHERENCE: """
-# Domain 2 (意向偏差-依从性分析) 审查标准：
+## Decision Paths for Deviations from Intended Interventions (Adherence)
 
-## 分析类型判断：
-- **Adherence分析**: 关注依从干预的效果
+**PATH_1**: (2.1 & 2.2)[All N/PN] -> 2.4[All NA/N/PN] -> Low risk
+Description: No deviations and appropriate analysis
 
-## 必须评估的要点：
-1. **依从性偏离识别**
-   - 未按计划接受干预的参与者比例
-   - 依从性相关的偏离类型
-   - 依从性偏离是否与结果相关
+**PATH_2**: (2.1 & 2.2)[Any Y/PY/NI] -> 2.3[N/PN/NI] -> 2.6[Y/PY] -> Some concerns
+Description: Deviations present but addressed in analysis
 
-2. **分析方法**
-   - Per-protocol分析的实施
-   - 依从性调整分析的恰当性
-   - 偏离处理的合理性
+**PATH_3**: (2.1 & 2.2)[Any Y/PY/NI] -> 2.3[N/PN/NI] -> 2.6[N/PN/NI] -> High risk
+Description: Deviations not appropriately addressed
 
-3. **偏离影响**
-   - 依从性偏离对结果的潜在影响
-   - 组间依从性的比较
+**PATH_4**: (2.1 & 2.2)[Any Y/PY/NI] -> 2.3[NA/Y/PY] -> 2.5[Any Y/PY/NI] -> Some concerns
+Description: Trial analyzed appropriately but deviations present
 
-## 判断标准：
-- Low risk: 依从性好或偏离不影响结果
-- Some concerns: 有依从性问题但影响有限
-- High risk: 严重依从性问题且可能影响结果
-
-## 必须纠正的错误：
-- 混淆assignment和adherence分析
-- 忽视依从性对结果的影响
-- 低估依从性偏离的重要性
+**PATH_5**: (2.1 & 2.2)[Any Y/PY/NI] -> 2.3[NA/Y/PY] -> 2.5[All NA/N/PN] -> Low risk
+Description: Appropriate per-protocol analysis with no issues
 """,
             DomainKey.MISSING_DATA: """
-# Domain 3 (缺失数据) 审查标准：
+## Decision Paths for Missing Outcome Data
 
-## 必须评估的要点：
-1. **缺失数据比例**
-   - 各组缺失数据的比例
-   - 缺失模式的分析
-   - 总体失访率
+**PATH_1**: 3.1[Y/PY] -> Low risk
+Description: Outcome data available for all or nearly all participants
 
-2. **缺失原因**
-   - 缺失是否与真实结果相关
-   - 缺失原因在组间是否平衡
-   - 缺失机制(MCAR/MAR/MNAR)
+**PATH_2**: 3.1[N/PN/NI] -> 3.2[Y/PY] -> Low risk
+Description: Evidence that missingness did not bias result
 
-3. **处理方法**
-   - 缺失数据插补方法
-   - 敏感性分析的实施
-   - 完整案例分析的合理性
+**PATH_3**: 3.1[N/PN/NI] -> 3.2[N/PN] -> 3.3[N/PN] -> Some concerns
+Description: Missingness could depend on value but unlikely
 
-## 判断标准：
-- Low risk: 无缺失或缺失很少且处理恰当
-- Some concerns: 缺失适中但处理合理
-- High risk: 大量缺失或处理方法不当
+**PATH_4**: 3.1[N/PN/NI] -> 3.2[N/PN] -> 3.3[Y/PY/NI] -> 3.4[N/PN] -> Some concerns
+Description: Missingness could depend on value but balanced/handled
 
-## 必须纠正的错误：
-- 仅关注比例忽视缺失机制
-- 未充分评估敏感性分析
-- 混淆不同类型的缺失数据
+**PATH_5**: 3.1[N/PN/NI] -> 3.2[N/PN] -> 3.3[Y/PY/NI] -> 3.4[Y/PY/NI] -> High risk
+Description: Missingness likely depends on true value
 """,
             DomainKey.MEASUREMENT: """
-# Domain 4 (结果测量) 审查标准：
+## Decision Paths for Measurement of the Outcome
 
-## 必须评估的要点：
-1. **测量方法特征**
-   - 客观测量 vs 主观测量
-   - 测量工具的可靠性
-   - 测量时机的一致性
+**PATH_1**: 4.1[Y/PY] -> High risk
+Description: Measurement method inappropriate
 
-2. **测量者盲法**
-   - 结果评估者是否知晓分组
-   - 盲法实施的有效性
-   - 盲法失败的可能性
+**PATH_2**: 4.1[N/PN/NI] -> 4.2[N/PN] -> 4.3[N/PN] -> Low risk
+Description: Appropriate method, no differential measurement
 
-3. **测量一致性**
-   - 测量方法在组间是否一致
-   - 测量环境的标准化
-   - 测量者间一致性
+**PATH_3**: 4.1[N/PN/NI] -> 4.2[N/PN] -> 4.3[Y/PY/NI] -> 4.4[N/PN] -> Low risk
+Description: Assessors aware but outcome not influenced
 
-## 判断标准：
-- Low risk: 客观测量或主观测量有充分盲法保护
-- Some concerns: 主观测量但有一定盲法保护
-- High risk: 主观测量且无盲法保护
+**PATH_4**: 4.1[N/PN/NI] -> 4.2[N/PN] -> 4.3[Y/PY/NI] -> 4.4[Y/PY/NI] -> 4.5[N/PN] -> Some concerns
+Description: Outcome could be influenced but unlikely
 
-## 必须纠正的错误：
-- 混淆客观和主观测量
-- 高估盲法的保护效果
-- 忽视测量时机的重要性
+**PATH_5**: 4.1[N/PN/NI] -> 4.2[N/PN] -> 4.3[Y/PY/NI] -> 4.4[Y/PY/NI] -> 4.5[Y/PY/NI] -> High risk
+Description: Outcome likely influenced by knowledge of intervention
+
+**PATH_6**: 4.1[N/PN/NI] -> 4.2[NI] -> 4.3[N/PN] -> Some concerns
+Description: No info on differential measurement but assessors blinded
+
+**PATH_7**: 4.1[N/PN/NI] -> 4.2[NI] -> 4.3[Y/PY/NI] -> 4.4[N/PN] -> Some concerns
+Description: No info on differential measurement, assessors aware
+
+**PATH_8**: 4.1[N/PN/NI] -> 4.2[NI] -> 4.3[Y/PY/NI] -> 4.4[Y/PY/NI] -> 4.5[N/PN] -> Some concerns
+Description: Uncertain differential measurement, possible influence
+
+**PATH_9**: 4.1[N/PN/NI] -> 4.2[NI] -> 4.3[Y/PY/NI] -> 4.4[Y/PY/NI] -> 4.5[Y/PY/NI] -> High risk
+Description: Uncertain differential measurement, likely influenced
+
+**PATH_10**: 4.1[N/PN/NI] -> 4.2[Y/PY] -> High risk
+Description: Differential measurement errors likely
 """,
             DomainKey.SELECTION: """
-# Domain 5 (结果选择) 审查标准：
+## Decision Paths for Selection of the Reported Result
 
-## 必须评估的要点：
-1. **预设分析计划**
-   - 是否有预先制定的分析计划
-   - 试验注册信息的一致性
-   - 分析方法的预设性
+**PATH_1**: (5.2 & 5.3)[All N/PN] -> 5.1[Y/PY] -> Low risk
+Description: Results analyzed according to pre-specified plan
 
-2. **多重比较**
-   - 多个结局的比较
-   - 亚组分析的多重性
-   - 统计检验的多重性
+**PATH_2**: (5.2 & 5.3)[All N/PN] -> 5.1[N/PN/NI] -> Some concerns
+Description: No pre-specified plan but no evidence of selection
 
-3. **选择性报告**
-   - 结果报告的完整性
-   - 不利结果的报告
-   - 数据驱动的分析选择
+**PATH_3**: (5.2 & 5.3)[At least one NI & none Y/PY] -> Some concerns
+Description: Some concerns about result selection
 
-## 判断标准：
-- Low risk: 有详细预设计划且严格遵循
-- Some concerns: 计划不够详细但无明显选择性
-- High risk: 无计划或明显选择性报告
-
-## 必须纠正的错误：
-- 忽视试验注册的重要性
-- 低估多重比较的影响
-- 混淆主要和次要结局
+**PATH_4**: (5.2 & 5.3)[Any Y/PY] -> High risk
+Description: Evidence of selective reporting
 """,
             "default": """
-# 通用ROB2审查标准：
+## Core Decision Path Principles
 
-## 基本要求：
-1. **逻辑一致性**: signals与overall判断必须逻辑一致
-2. **证据充分性**: 每个判断必须有充分证据支撑
-3. **风险等级准确性**: 风险等级必须与具体分析匹配
-4. **格式规范性**: 输出格式必须符合GenericDomainJudgement要求
+### Mandatory Execution Rules
+1. **Strict Path Following**: Must follow the exact decision tree paths without deviation
+2. **Sequential Processing**: Answer questions in the exact order specified by the paths
+3. **No Autonomous Judgments**: Cannot make risk judgments outside of the defined paths
+4. **Path Endpoints Are Final**: The risk level MUST match the path's endpoint exactly
 
-## 风险等级标准：
-- **Low risk**: 偏差风险很低，研究设计和实施恰当
-- **Some concerns**: 存在一些担忧，但偏差风险不高
-- **High risk**: 偏差风险很高，结果可信度受到严重影响
+### Execution Standards
+- ✅ Follow if-then logic strictly
+- ✅ Process each signal according to path conditions
+- ✅ Trace complete path from start to risk endpoint
+- ❌ PROHIBITED: Direct risk judgment based on intuition
+- ❌ PROHIBITED: Skipping intermediate path steps
+- ❌ PROHIBITED: Creating new paths or exceptions
 
-## 通用检查要求：
-1. 每个signal的answer必须明确(Yes/Probably yes/Probably no/No/No information)
-2. 每个判断的reason必须详细且逻辑清晰
-3. evidence必须具体且支撑判断
-4. overall risk必须基于signals的综合分析
+### Conflict Resolution
+When signal answers conflict with overall risk:
+1. Identify the correct path based on signal answers
+2. If overall risk doesn't match path endpoint, it MUST be changed
+3. If signals lack strong evidence, they may be adjusted to match a valid path
+4. The decision path is ABSOLUTE - no compromises allowed
 
-请严格按照ROB2框架标准进行审查和重写。
+Remember: These are not guidelines but MANDATORY rules. The decision path determines the outcome, not clinical judgment.
 """,
         }
 
 
 def create_sample_config_file(file_path: str = "review_standards.json") -> None:
-    """创建示例配置文件"""
+    """Create sample configuration file with decision paths"""
     config = ReviewConfig()
     config.save_to_file(file_path)
-    print(f"示例配置文件已创建: {file_path}")
-    print("你可以编辑此文件来自定义审查标准")
+    print(f"Sample configuration file created: {file_path}")
+    print("You can edit this file to customize decision path standards")
 
 
 def load_custom_standards(file_path: str) -> Dict[str, str]:
-    """加载自定义审查标准的便捷函数"""
+    """Convenience function to load custom review standards"""
     config = ReviewConfig(file_path)
     return config.get_standards()
 
 
 if __name__ == "__main__":
-    # 创建示例配置文件
+    # Create sample configuration file
     create_sample_config_file()
